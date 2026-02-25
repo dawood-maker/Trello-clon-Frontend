@@ -1,0 +1,48 @@
+mery pas ye sab files hain:yar:pehly sab baat suna phir jab me kho to kam karna : me ny trello clone bnaya hain or os me ye Frontend (Port 3005) ✅
+Files:
+components/ - Sidebar, Column, CardItem, Login, Register, Profile, OTP, ForgetPassword,resetPassword, LoginPage, Update
+context/ - BoardContext.jsx,AuthContext.jsx
+data/ - initialData.js
+App.jsx - Main app with DragOverlay
+index.js - Entry point
+Features Working:
+✅ Perfect Trello Clone UI
+✅ Boards: Create, Select, Color change
+✅ Columns: To Do (2), In Progress (2), Done (3)
+✅ Cards: Drag & Drop smoothly with DragOverlay
+✅ Sidebar with board list
+✅ Reset All button
+✅ localStorage for data persistence or backaned me ye files hain backend/
+├── controllers/ (auth, board, card, column)
+├── middleware/ (auth.js)
+├── models/ (User, Board, Card, Column)
+├── routes/ (auth, boards, cards, columns)
+├── config/ (passport.js)
+├── server.js
+├── .env (MongoDB + JWT + Email config)"
+
+
+
+User → /forgot-password → Email daalta hai
+6-digit OTP email par jata hai
+User → /otp page → 6 digit OTP daalta hai (2 minute timer)
+OTP sahi → /update page khulta hai
+New password daalta hai → Save
+Login page → New password se login → Sab boards/cards safe
+
+
+
+
+yar tum bs esa kardo k kuch chezy thek b hain or nhi b forget password k bad email verify k bad 2 
+second me hi code chly jay email par phir wo otp lgay or osky bad update password phir new password 
+mongodb me save ho esy hi new register par register new account ho jay koi problem na ho phir jab register
+ k bad jo b new user login kary osko 3 coulmn pehly show ho bs to do in progress or done or aik column 
+ extra another column k liy or me ny Dashboard.jsx me sidebar me new board diya hain odhar sy ja kar user
+  k new board save kary osko name dy rgb combination color dy ,card column delete edit ho save cancel ho
+   drag card smoothly cursor k sath beautiful animation k sath ho or har user k apny board ho jo b new 
+   user apny board me chaning kary oska save rhy multiple user wala kam ho or akhir me suno in main sy
+    kafi kam kiya b howa hain agr ye kam karny k liy koi chez missing hain to wo kar dena lakin baki jo 
+    kam howa howa hain osko mat change karna baki sab wesy hi rhy jesa hain or jo kam kaha bs yehi karna 
+    , me ny tumko sab files k name bta diy hain tum bta dena kon c file ka code chahiy me dy do ga to 
+    phir tum update kar k dy dena one by one jab me ok likho phir next file name bta dena or update code
+    
