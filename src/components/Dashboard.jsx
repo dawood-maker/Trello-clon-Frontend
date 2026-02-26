@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useBoard } from "../context/BoardContext";
 import Sidebar from "./Sidebar";
-import Column from "./Column";
-import CardItem from "./CardItem";
+import Column from "./Column/Column";
+import CardItem from "./CardItem/CardItem";
 import {
   DndContext,
   DragOverlay,
