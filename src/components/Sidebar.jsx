@@ -12,12 +12,12 @@ const Sidebar = ({
   onClose,
 }) => {
   return (
-    <div className="w-64 bg-gray-900 h-full flex flex-col text-white shadow-2xl">
+    <div className="w-64 bg-[#001219] h-full flex flex-col text-white shadow-2xl">
       {/* Header - Trello Clone Icon */}
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 text-white p-2 rounded font-bold text-lg">
+            <div className="bg-[#14213d] text-white p-2 rounded font-bold text-lg">
               T
             </div>
             <h2 className="text-xl font-bold">Trello Clone</h2>

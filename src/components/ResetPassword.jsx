@@ -80,7 +80,7 @@ const ResetPassword = () => {
                   "Password reset successfully! Please login with your new password.",
               },
             }),
-          2000
+          2000,
         );
       } else {
         setMessage(result.message || "Failed to reset password");
@@ -163,7 +163,8 @@ const ResetPassword = () => {
           Create New Password
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Set a strong password for <strong className="text-blue-600">{email}</strong>
+          Set a strong password for{" "}
+          <strong className="text-blue-600">{email}</strong>
         </p>
       </div>
 
@@ -296,14 +297,18 @@ const ResetPassword = () => {
                 />
               </div>
               {confirmPassword && newPassword !== confirmPassword && (
-                <p className="mt-1 text-xs text-red-600">Passwords do not match</p>
+                <p className="mt-1 text-xs text-red-600">
+                  Passwords do not match
+                </p>
               )}
             </div>
 
             <button
               type="submit"
               disabled={
-                isLoading || newPassword.length < 6 || newPassword !== confirmPassword
+                isLoading ||
+                newPassword.length < 6 ||
+                newPassword !== confirmPassword
               }
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
             >

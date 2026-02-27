@@ -9,12 +9,12 @@ import {
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { BoardProvider } from "./context/BoardContext";
 
-import Login from "./components/Login";
+import Login from "./components/Login/Login";
 import Register from "./components/Register";
-import ForgetPassword from "./components/ForgetPassword";
+import ForgetPassword from "./components/ForgetPassword/ForgetPassword";
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
-import OTP from "./components/OTP";
+import OTP from "./components/OTP/OTP";
 import ResetPassword from "./components/ResetPassword";
 import Update from "./components/Update"; // ✅ Import the Update component
 
