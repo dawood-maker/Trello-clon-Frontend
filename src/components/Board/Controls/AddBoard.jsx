@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useBoard } from "../../context/BoardContext";
+import { useBoard } from "../../../context/BoardContext";
 
 const AddBoard = () => {
   const { addBoard } = useBoard();
