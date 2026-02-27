@@ -49,22 +49,67 @@ export const BoardProvider = ({ children }) => {
   const [data, setData] = useState(initialState);
   const [loading, setLoading] = useState(true);
 
+  // Load from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("trello_clone_data");
     if (saved) setData(JSON.parse(saved));
     setLoading(false);
   }, []);
 
+  // Save to localStorage
   useEffect(() => {
     if (!loading) {
       localStorage.setItem("trello_clone_data", JSON.stringify(data));
     }
   }, [data, loading]);
 
-  // =========================
-  // 🔥 DRAG END FUNCTION
-  // =========================
+  // ✅ RESET
+  const resetAll = useCallback(() => {
+    localStorage.removeItem("trello_clone_data");
+    setData(initialState);
+  }, []);
 
+  // ✅ DELETE CARD
+  const deleteCard = useCallback((cardId) => {
+    setData((prev) => {
+      const boardId = prev.currentBoard;
+      const card = prev.cards[cardId];
+      if (!card) return prev;
+
+      const columnId = card.columnId;
+
+      const newBoards = { ...prev.boards };
+      const newCards = { ...prev.cards };
+
+      newBoards[boardId].columns[columnId].cardIds = newBoards[boardId].columns[
+        columnId
+      ].cardIds.filter((id) => id !== cardId);
+
+      delete newCards[cardId];
+
+      return {
+        ...prev,
+        boards: newBoards,
+        cards: newCards,
+      };
+    });
+  }, []);
+
+  // ✅ EDIT CARD TEXT (ADDED)
+  const editCardText = useCallback((cardId, newText) => {
+    setData((prev) => ({
+      ...prev,
+      cards: {
+        ...prev.cards,
+        [cardId]: {
+          ...prev.cards[cardId],
+          text: newText,
+        },
+      },
+    }));
+  }, []);
+
+  // DRAG END
   const onDragEnd = useCallback(
     (event) => {
       const { active, over } = event;
@@ -73,11 +118,10 @@ export const BoardProvider = ({ children }) => {
       const boardId = data.currentBoard;
       const board = data.boards[boardId];
 
-      // COLUMN DRAG
+      // Column drag
       if (board.columnOrder.includes(active.id)) {
         const oldIndex = board.columnOrder.indexOf(active.id);
         const newIndex = board.columnOrder.indexOf(over.id);
-
         const newOrder = arrayMove(board.columnOrder, oldIndex, newIndex);
 
         setData((prev) => ({
@@ -90,11 +134,10 @@ export const BoardProvider = ({ children }) => {
             },
           },
         }));
-
         return;
       }
 
-      // CARD DRAG
+      // Card drag
       const activeCard = data.cards[active.id];
       if (!activeCard) return;
 
@@ -111,15 +154,12 @@ export const BoardProvider = ({ children }) => {
         const sourceColumn = newBoards[boardId].columns[sourceColumnId];
         const destColumn = newBoards[boardId].columns[destinationColumnId];
 
-        // Remove from source
         sourceColumn.cardIds = sourceColumn.cardIds.filter(
           (id) => id !== active.id,
         );
 
-        // Add to destination
         destColumn.cardIds.push(active.id);
 
-        // Update card columnId
         newCards[active.id] = {
           ...newCards[active.id],
           columnId: destinationColumnId,
@@ -135,9 +175,33 @@ export const BoardProvider = ({ children }) => {
     [data],
   );
 
-  // =========================
-  // OTHER FUNCTIONS
-  // =========================
+  // ADD BOARD
+  const addBoard = useCallback((name, color) => {
+    const boardId = uuidv4();
+
+    setData((prev) => ({
+      ...prev,
+      boards: {
+        ...prev.boards,
+        [boardId]: {
+          id: boardId,
+          name,
+          color,
+          columnOrder: [],
+          columns: {},
+        },
+      },
+      boardOrder: [...prev.boardOrder, boardId],
+      currentBoard: boardId,
+    }));
+  }, []);
+
+  const selectBoard = useCallback((boardId) => {
+    setData((prev) => ({
+      ...prev,
+      currentBoard: boardId,
+    }));
+  }, []);
 
   const addColumn = useCallback((boardId, title) => {
     const id = uuidv4();
@@ -184,9 +248,14 @@ export const BoardProvider = ({ children }) => {
   const value = {
     data,
     loading,
+    addBoard,
+    selectBoard,
     addColumn,
     addCard,
-    onDragEnd, // 🔥 IMPORTANT
+    onDragEnd,
+    resetAll,
+    deleteCard,
+    editCardText, // ✅ ADDED HERE
   };
 
   return (
