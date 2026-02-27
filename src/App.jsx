@@ -16,7 +16,7 @@ import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 import OTP from "./components/OTP/OTP";
 import ResetPassword from "./pages/ResetPasswordPage";
-import Update from "./components/Update"; // ✅ Import the Update component
+import Update from "./pages/UpdatePasswordPage"; 
 
 // ProtectedRoute with debug logs
 const ProtectedRoute = ({ children }) => {
