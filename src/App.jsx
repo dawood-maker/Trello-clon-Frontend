@@ -119,7 +119,7 @@ const App = () => {
             />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/update" element={<Update />} />{" "}
-            {/* ✅ NEW: Update password route */}
+            {/*  NEW: Update password route */}
             {/* Protected Routes */}
             <Route
               path="/dashboard"

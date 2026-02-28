@@ -1,16 +1,18 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:5002/api";
-
+//===================================
 // Create axios instance
+//===================================
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
-
+//===================================
 // Add token to requests
+//===================================
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -21,14 +23,15 @@ api.interceptors.request.use((config) => {
     config.method.toUpperCase(),
     config.url,
     config.data || "No body",
-  ); // ✅ Log request
+  ); //  Log request
   return config;
 });
-
+//===================================
 // Add response logging
+//===================================
 api.interceptors.response.use(
   (response) => {
-    console.log("API Response:", response.config.url, response.data); // ✅ Log successful response
+    console.log("API Response:", response.config.url, response.data); //  Log successful response
     return response;
   },
   (error) => {
@@ -36,12 +39,13 @@ api.interceptors.response.use(
       "API Error:",
       error.config?.url,
       error.response?.data || error.message,
-    ); // ✅ Log error
+    ); //  Log error
     return Promise.reject(error);
   },
 );
-
+//===================================
 // Auth APIs
+//===================================
 export const authAPI = {
   register: (data) => {
     console.log("Calling authAPI.register with data:", data);
@@ -60,8 +64,9 @@ export const authAPI = {
     return api.post("/auth/reset-password", data);
   },
 };
-
+//===================================
 // Board APIs
+//===================================
 export const boardAPI = {
   getAll: () => {
     console.log("Calling boardAPI.getAll");
@@ -84,8 +89,9 @@ export const boardAPI = {
     return api.delete(`/boards/${id}`);
   },
 };
-
+//===================================
 // Column APIs
+//===================================
 export const columnAPI = {
   getAll: (boardId) => {
     console.log("Calling columnAPI.getAll for boardId:", boardId);
@@ -118,8 +124,9 @@ export const columnAPI = {
     return api.post("/columns/reorder", data);
   },
 };
-
+//===================================
 // Card APIs
+//===================================
 export const cardAPI = {
   getAll: (columnId) => {
     console.log("Calling cardAPI.getAll for columnId:", columnId);

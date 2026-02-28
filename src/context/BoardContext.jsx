@@ -48,28 +48,32 @@ export const useBoard = () => {
 export const BoardProvider = ({ children }) => {
   const [data, setData] = useState(initialState);
   const [loading, setLoading] = useState(true);
-
+  //===================================
   // Load from localStorage
+  //===================================
   useEffect(() => {
     const saved = localStorage.getItem("trello_clone_data");
     if (saved) setData(JSON.parse(saved));
     setLoading(false);
   }, []);
-
+  //===================================
   // Save to localStorage
+  //===================================
   useEffect(() => {
     if (!loading) {
       localStorage.setItem("trello_clone_data", JSON.stringify(data));
     }
   }, [data, loading]);
-
-  // ✅ RESET
+  //===================================
+  //  RESET
+  //===================================
   const resetAll = useCallback(() => {
     localStorage.removeItem("trello_clone_data");
     setData(initialState);
   }, []);
-
-  // ✅ DELETE CARD
+  //===================================
+  //  DELETE CARD
+  //===================================
   const deleteCard = useCallback((cardId) => {
     setData((prev) => {
       const boardId = prev.currentBoard;
@@ -94,8 +98,9 @@ export const BoardProvider = ({ children }) => {
       };
     });
   }, []);
-
-  // ✅ EDIT CARD TEXT (ADDED)
+  //===================================
+  //  EDIT CARD TEXT (ADDED)
+  //===================================
   const editCardText = useCallback((cardId, newText) => {
     setData((prev) => ({
       ...prev,
@@ -108,8 +113,9 @@ export const BoardProvider = ({ children }) => {
       },
     }));
   }, []);
-
+  //===================================
   // DRAG END
+  //===================================
   const onDragEnd = useCallback(
     (event) => {
       const { active, over } = event;
@@ -136,8 +142,9 @@ export const BoardProvider = ({ children }) => {
         }));
         return;
       }
-
+      //===================================
       // Card drag
+      //===================================
       const activeCard = data.cards[active.id];
       if (!activeCard) return;
 
@@ -174,8 +181,9 @@ export const BoardProvider = ({ children }) => {
     },
     [data],
   );
-
+  //===================================
   // ADD BOARD
+  //===================================
   const addBoard = useCallback((name, color) => {
     const boardId = uuidv4();
 
@@ -255,7 +263,7 @@ export const BoardProvider = ({ children }) => {
     onDragEnd,
     resetAll,
     deleteCard,
-    editCardText, // ✅ ADDED HERE
+    editCardText,
   };
 
   return (

@@ -11,8 +11,9 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const clearError = () => setError(null);
-
+  //===================================
   // ------------------ REGISTER ------------------
+  //===================================
   const register = async (name, email, password) => {
     console.log("Register called with:", { name, email, password });
     try {
@@ -41,8 +42,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: err.message };
     }
   };
-
+  //===================================
   // ------------------ LOGIN ------------------
+  //===================================
   const login = async (email, password) => {
     console.log("Login called with:", { email, password });
     try {
@@ -71,8 +73,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: err.message };
     }
   };
-
+  //===================================
   // ------------------ LOGOUT ------------------
+  //===================================
   const logout = async () => {
     console.log("Logout called");
     try {
@@ -90,8 +93,9 @@ export const AuthProvider = ({ children }) => {
       setError(null);
     }
   };
-
+  //===================================
   // ------------------ FORGOT PASSWORD ------------------
+  //===================================
   const forgotPassword = async (email) => {
     console.log("ForgotPassword called with:", { email });
     try {
@@ -111,8 +115,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: err.message };
     }
   };
-
+  //===================================
   // ------------------ VERIFY OTP ------------------
+  //===================================
   const verifyOTP = async (email, otp) => {
     console.log("VerifyOTP called with:", { email, otp });
     try {
@@ -132,8 +137,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: err.message };
     }
   };
-
+  //===================================
   // ------------------ RESET PASSWORD ------------------
+  //===================================
   const resetPassword = async (email, otp, newPassword) => {
     console.log("ResetPassword called with:", { email, otp, newPassword });
     try {
@@ -153,8 +159,9 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: err.message };
     }
   };
-
+  //===================================
   // Legacy support
+  //===================================
   const updatePassword = resetPassword;
 
   return (
@@ -177,6 +184,7 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
+//===================================
 // Custom hook
+//===================================
 export const useAuth = () => useContext(AuthContext);

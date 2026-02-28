@@ -1,21 +1,24 @@
 import { v4 as uuid } from "uuid";
-
+//===================================
 // Helper to create a card
+//===================================
 const makeCard = (text) => {
   const id = uuid();
   const card = { id, text };
-  console.log("Created card:", card); // ✅ Log card creation
+  console.log("Created card:", card);
   return card;
 };
-
+//===================================
 // Initial cards
+//===================================
 const card1 = makeCard("Project Description 1");
 const card2 = makeCard("Project Description 2");
 const card3 = makeCard("Project Description 3");
 
 console.log("Initial cards IDs:", card1.id, card2.id, card3.id);
-
+//===================================
 // Default board
+//===================================
 export const defaultBoards = {
   boards: {
     "board-1": {
