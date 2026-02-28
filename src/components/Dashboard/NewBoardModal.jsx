@@ -101,14 +101,14 @@ const NewBoardModal = ({
         <div className="flex space-x-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+            className="flex-1 px-4 py-3 bg-[#595959] text-gray-700 rounded-lg hover:bg-[#7f7f7f] transition-colors font-medium"
           >
             Cancel
           </button>
           <button
             onClick={onCreate}
             disabled={!newBoardName.trim()}
-            className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 bg-[#2a0800] text-white rounded-lg hover:bg-[#775144] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Create Board
           </button>
