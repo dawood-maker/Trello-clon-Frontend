@@ -12,7 +12,7 @@ const Sidebar = ({
   onClose,
 }) => {
   return (
-    <div className="w-64 bg-[#001219] h-full flex flex-col text-white shadow-2xl">
+    <div className="w-64 bg-[#031926] h-full flex flex-col text-white shadow-2xl">
       {/* Header - Trello Clone Icon */}
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center justify-between">
@@ -98,7 +98,7 @@ const Sidebar = ({
             console.log("Add new board button clicked");
             onAddBoard();
           }}
-          className="w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors flex items-center justify-center space-x-2"
+          className="w-full px-4 py-2.5 bg-[#283618] hover:bg-[#606c38] text-white rounded-md text-sm font-medium transition-colors flex items-center justify-center space-x-2"
         >
           <span>+</span>
           <span>New Board</span>
@@ -109,7 +109,7 @@ const Sidebar = ({
             console.log("Reset all button clicked");
             onResetAll();
           }}
-          className="w-full px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
+          className="w-full px-4 py-2.5 bg-[#780000] hover:bg-[#c1121f] text-white rounded-md text-sm font-medium transition-colors"
         >
           Reset All
         </button>
