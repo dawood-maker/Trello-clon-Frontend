@@ -19,8 +19,18 @@ const NewBoardModal = ({
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -42,7 +52,9 @@ const NewBoardModal = ({
               if (e.key === "Enter" && newBoardName.trim()) onCreate();
             }}
           />
-          <p className="mt-1 text-xs text-gray-500">{newBoardName.length}/50 characters</p>
+          <p className="mt-1 text-xs text-gray-500">
+            {newBoardName.length}/50 characters
+          </p>
         </div>
 
         {/* Board Color */}
@@ -58,7 +70,9 @@ const NewBoardModal = ({
             />
             <div>
               <p className="text-xs text-gray-500">Selected Color</p>
-              <p className="text-sm font-mono font-semibold text-gray-900">{newBoardColor}</p>
+              <p className="text-sm font-mono font-semibold text-gray-900">
+                {newBoardColor}
+              </p>
             </div>
           </div>
 
@@ -87,13 +101,16 @@ const NewBoardModal = ({
               value={newBoardColor}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.startsWith("#") && value.length <= 7) setNewBoardColor(value);
+                if (value.startsWith("#") && value.length <= 7)
+                  setNewBoardColor(value);
               }}
               placeholder="#60A5FA"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono"
               maxLength={7}
             />
-            <p className="mt-1 text-xs text-gray-500">Format: #RRGGBB (e.g., #60A5FA for blue)</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Format: #RRGGBB (e.g., #60A5FA for blue)
+            </p>
           </div>
         </div>
 
