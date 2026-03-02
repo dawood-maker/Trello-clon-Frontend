@@ -15,7 +15,7 @@ const initialState = {
     "board-1": {
       id: "board-1",
       name: "Welcome Board",
-      color: "#60A5FA",
+      color: "#x",
       columnOrder: ["column-1", "column-2", "column-3"],
       columns: {
         "column-1": { id: "column-1", title: "To Do", cardIds: ["card-1"] },
