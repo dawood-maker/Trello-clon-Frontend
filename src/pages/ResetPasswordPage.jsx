@@ -3,9 +3,9 @@ import ResetPasswordForm from "../components/ResetPassword/ResetPasswordForm";
 
 const ResetPasswordPage = () => {
   const location = useLocation();
-  const { resetToken, email } = location.state || {};
+  const { email, otp } = location.state || {};
 
-  if (!resetToken) {
+  if (!email || !otp) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
         <div className="max-w-md w-full text-center">
@@ -47,7 +47,7 @@ const ResetPasswordPage = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        <ResetPasswordForm resetToken={resetToken} email={email} />
+        <ResetPasswordForm email={email} otp={otp} />
       </div>
     </div>
   );

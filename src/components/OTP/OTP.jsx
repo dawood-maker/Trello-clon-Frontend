@@ -5,9 +5,9 @@ const OTP = ({ email, navigate }) => {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [counter, setCounter] = useState(120); // 2 minutes timer
+  const [counter, setCounter] = useState(120);
   const { verifyOTP, error, clearError } = useAuth();
-  const hasNavigated = useRef(false); // ✅ Prevent multiple navigations
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -19,11 +19,9 @@ const OTP = ({ email, navigate }) => {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  // Format time as MM:SS
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -32,7 +30,6 @@ const OTP = ({ email, navigate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (isLoading || hasNavigated.current) return;
 
     clearError();
@@ -50,10 +47,10 @@ const OTP = ({ email, navigate }) => {
 
       if (result.success && !hasNavigated.current) {
         hasNavigated.current = true;
-        setMessage("✅ OTP verified! Redirecting to password reset...");
+        setMessage("✅ OTP verified! Redirecting...");
 
         setTimeout(() => {
-          navigate("/update", {
+          navigate("/reset-password", {
             state: { email, otp },
             replace: true,
           });
@@ -69,11 +66,11 @@ const OTP = ({ email, navigate }) => {
     }
   };
 
-  const handleResendOTP = async () => {
+  const handleResendOTP = () => {
     setMessage("");
     clearError();
     setCounter(120);
-    setMessage("✅ New OTP sent to your email!");
+    navigate("/forgot-password");
   };
 
   return (
@@ -81,43 +78,29 @@ const OTP = ({ email, navigate }) => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center">
-            <svg
-              className="h-10 w-10 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
+            <svg className="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Enter Verification Code
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            We sent a 6-digit code to
-          </p>
-          <p className="text-center text-sm font-semibold text-blue-600">
-            {email}
-          </p>
+          <p className="mt-2 text-center text-sm text-gray-600">We sent a 6-digit code to</p>
+          <p className="text-center text-sm font-semibold text-blue-600">{email}</p>
         </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 border border-gray-200">
+
           {message && (
-            <div
-              className={`px-4 py-3 rounded-lg text-sm mb-4 flex items-center space-x-2 ${
-                message.includes("✅")
-                  ? "bg-green-50 text-green-700 border border-green-200"
-                  : "bg-red-50 text-red-600 border border-red-200"
-              }`}
-            >
-              <span>{message}</span>
+            <div className={`px-4 py-3 rounded-lg text-sm mb-4 ${
+              message.includes("✅")
+                ? "bg-green-50 text-green-700 border border-green-200"
+                : "bg-red-50 text-red-600 border border-red-200"
+            }`}>
+              {message}
             </div>
           )}
 
@@ -129,20 +112,14 @@ const OTP = ({ email, navigate }) => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="otp"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
                 Verification Code
               </label>
               <input
                 type="text"
                 id="otp"
                 value={otp}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  setOtp(value);
-                }}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                 required
                 maxLength={6}
                 className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl font-bold tracking-widest"
@@ -156,40 +133,28 @@ const OTP = ({ email, navigate }) => {
             </div>
 
             <div className="bg-gray-50 rounded-lg p-4 flex items-center justify-between border border-gray-200">
-              <span
-                className={`text-lg font-bold ${counter <= 30 ? "text-red-600" : "text-blue-600"}`}
-              >
+              <span className={`text-lg font-bold ${counter <= 30 ? "text-red-600" : "text-blue-600"}`}>
                 {formatTime(counter)}
               </span>
+              <span className="text-sm text-gray-500">Time remaining</span>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={
-                  isLoading ||
-                  counter === 0 ||
-                  otp.length !== 6 ||
-                  hasNavigated.current
-                }
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                {isLoading ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                ) : (
-                  "Verify & Continue"
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading || counter === 0 || otp.length !== 6 || hasNavigated.current}
+              className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading
+                ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                : "Verify & Continue"
+              }
+            </button>
 
             {counter === 0 && (
               <div className="text-center">
                 <p className="text-sm text-red-600 mb-2">⏰ OTP has expired</p>
-                <button
-                  type="button"
-                  onClick={handleResendOTP}
-                  className="text-sm font-medium text-blue-600 hover:text-blue-500"
-                >
+                <button type="button" onClick={handleResendOTP}
+                  className="text-sm font-medium text-blue-600 hover:text-blue-500">
                   Resend OTP
                 </button>
               </div>
