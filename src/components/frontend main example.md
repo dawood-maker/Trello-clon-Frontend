@@ -10,6 +10,4 @@ const res = await axios.post(
 
 
 
-----------------------------------------------------------------
-New things to learn
-Learn React hook form for form and validations.
+.
