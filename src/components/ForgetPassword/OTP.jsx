@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { useAuth } from "../../context/AuthContext"; // ✅ ADD 1: Import useAuth
 
 const OTP = ({ email, navigate }) => {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [counter, setCounter] = useState(120);
+  const { verifyOTP } = useAuth(); // ✅ ADD 2: verifyOTP nikaalo AuthContext se
   const hasNavigated = useRef(false);
 
   useEffect(() => {
@@ -40,13 +41,10 @@ const OTP = ({ email, navigate }) => {
     setMessage("");
 
     try {
-      // ✅ FIX: API call to backend
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/otp/verify`,
-        { email, otp },
-      );
+      // ✅ ADD 3: axios hatao, verifyOTP use karo AuthContext se
+      const result = await verifyOTP(email, otp);
 
-      if (response.data.success && !hasNavigated.current) {
+      if (result.success && !hasNavigated.current) {
         hasNavigated.current = true;
         setMessage("✅ OTP verified! Redirecting...");
         setTimeout(() => {
@@ -55,11 +53,12 @@ const OTP = ({ email, navigate }) => {
             replace: true,
           });
         }, 800);
+      } else {
+        setMessage(result.message || "Invalid OTP. Please try again.");
+        setIsLoading(false);
       }
     } catch (err) {
-      const msg =
-        err.response?.data?.message || "Invalid OTP. Please try again.";
-      setMessage(msg);
+      setMessage("Something went wrong. Please try again.");
       setIsLoading(false);
     }
   };
