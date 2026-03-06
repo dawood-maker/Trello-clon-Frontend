@@ -11,31 +11,23 @@ const NewBoardModal = ({
 }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
+
       <div className="bg-white rounded-2xl p-6 w-full max-w-md h-[75vh] overflow-y-auto shadow-2xl">
-        {/* Header */}
+
+        {/* ---------------- Header ---------------- */}
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-2xl font-bold text-gray-900">Create New Board</h3>
           <button
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-full transition"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Board Name */}
+        {/* ---------------- Board Name ---------------- */}
         <div className="mb-4">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Board Name <span className="text-red-500">*</span>
@@ -57,12 +49,11 @@ const NewBoardModal = ({
           </p>
         </div>
 
-        {/* Board Color */}
+        {/* ---------------- Board Color ---------------- */}
         <div className="mb-5">
-          <label className="block text-sm font-semibold text-gray-700 mb-3">
-            Board Color
-          </label>
+          <label className="block text-sm font-semibold text-gray-700 mb-3">Board Color</label>
 
+          {/* Selected Color Display */}
           <div className="flex items-center space-x-3 mb-3">
             <div
               className="w-14 h-14 rounded-xl shadow-md border-2 border-gray-200 flex-shrink-0"
@@ -70,12 +61,11 @@ const NewBoardModal = ({
             />
             <div>
               <p className="text-xs text-gray-500">Selected Color</p>
-              <p className="text-sm font-mono font-semibold text-gray-900">
-                {newBoardColor}
-              </p>
+              <p className="text-sm font-mono font-semibold text-gray-900">{newBoardColor}</p>
             </div>
           </div>
 
+          {/* Predefined Color Palette */}
           <div className="grid grid-cols-6 gap-2 mb-3">
             {COLOR_PALETTE.map((color) => (
               <button
@@ -92,6 +82,7 @@ const NewBoardModal = ({
             ))}
           </div>
 
+          {/* Custom Hex Color Input */}
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">
               Or enter custom hex color:
@@ -101,8 +92,7 @@ const NewBoardModal = ({
               value={newBoardColor}
               onChange={(e) => {
                 const value = e.target.value;
-                if (value.startsWith("#") && value.length <= 7)
-                  setNewBoardColor(value);
+                if (value.startsWith("#") && value.length <= 7) setNewBoardColor(value);
               }}
               placeholder="#60A5FA"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-mono"
@@ -114,7 +104,7 @@ const NewBoardModal = ({
           </div>
         </div>
 
-        {/* Buttons */}
+        {/* ---------------- Action Buttons ---------------- */}
         <div className="flex space-x-3">
           <button
             onClick={onClose}
@@ -130,6 +120,7 @@ const NewBoardModal = ({
             Create Board
           </button>
         </div>
+
       </div>
     </div>
   );

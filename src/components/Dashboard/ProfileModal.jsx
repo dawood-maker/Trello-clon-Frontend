@@ -3,6 +3,7 @@ import React from "react";
 const ProfileModal = ({ user, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[110] p-4 backdrop-blur-sm">
     <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl transform transition-all duration-300 scale-100">
+      {/* ---------------- Header ---------------- */}
       <div className="flex justify-between items-center border-b pb-3 mb-4">
         <h3 className="text-2xl font-extrabold text-gray-900">
           👤 User Profile
@@ -27,7 +28,9 @@ const ProfileModal = ({ user, onClose }) => (
         </button>
       </div>
 
+      {/* ---------------- User Info ---------------- */}
       <div className="space-y-4">
+        {/* Name */}
         <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
           <svg
             className="w-8 h-8 text-blue-500"
@@ -50,6 +53,7 @@ const ProfileModal = ({ user, onClose }) => (
           </div>
         </div>
 
+        {/* Email */}
         <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
           <svg
             className="w-8 h-8 text-blue-500"

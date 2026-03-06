@@ -40,14 +40,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-200">
-      <h1 className="text-3xl font-bold mb-4">Trello Clone</h1>
-      <p className="mb-6 text-gray-700">Login to your account</p>
-      <div className="bg-white p-8 rounded shadow-md w-96 flex flex-col">
+    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500">
+      <h1 className="text-4xl font-extrabold mb-4 text-white drop-shadow-lg">
+        Trello Clone
+      </h1>
+      <p className="mb-6 text-white text-lg drop-shadow-sm">
+        Login to your account
+      </p>
+      <div className="bg-white p-10 rounded-3xl shadow-2xl w-96 flex flex-col transform hover:scale-105 transition-transform duration-300">
         {error && (
           <>
             {console.log("⚠️ Error Displayed:", error)}
-            <p className="text-red-500 mb-2">{error}</p>
+            <p className="text-red-600 font-semibold mb-2 animate-pulse">
+              {error}
+            </p>
           </>
         )}
 
@@ -59,7 +65,7 @@ export default function LoginPage() {
             console.log("✏️ Email Changed:", e.target.value);
             setEmail(e.target.value);
           }}
-          className="mb-4 p-2 border rounded"
+          className="mb-4 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
         />
 
         <input
@@ -70,12 +76,12 @@ export default function LoginPage() {
             console.log("✏️ Password Changed");
             setPassword(e.target.value);
           }}
-          className="mb-4 p-2 border rounded"
+          className="mb-6 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
         />
 
         <button
           onClick={handleLogin}
-          className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition"
+          className="bg-gradient-to-r from-purple-600 to-pink-500 text-white py-3 rounded-xl font-bold shadow-lg hover:from-pink-500 hover:to-purple-600 transition-all"
         >
           Login
         </button>

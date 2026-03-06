@@ -6,7 +6,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useBoard } from "../../context/BoardContext";
-import CardItem from "../CardItem/CardItem"; // ✅ Fixed: sahi path
+import CardItem from "../CardItem/CardItem";
 import ColumnHeader from "./ColumnHeader";
 import AddCardForm from "./AddCardForm";
 
@@ -44,7 +44,7 @@ const Column = ({ column, cards, onAddCard }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="w-72 bg-gray-700 opacity-50 rounded-lg p-3"
+        className="w-72 bg-gray-700/50 rounded-xl p-3 animate-pulse"
       />
     );
   }
@@ -53,7 +53,7 @@ const Column = ({ column, cards, onAddCard }) => {
     <div
       ref={setNodeRef}
       style={{ ...style, backgroundColor: boardColor }}
-      className="w-72 rounded-lg flex flex-col shadow-lg"
+      className="w-72 rounded-2xl flex flex-col shadow-2xl border border-gray-200/50 backdrop-blur-sm transition-all duration-300 hover:shadow-3xl"
     >
       <ColumnHeader
         column={column}
@@ -63,7 +63,7 @@ const Column = ({ column, cards, onAddCard }) => {
       />
 
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-        <div className="overflow-y-auto px-2 pb-2 space-y-2">
+        <div className="overflow-y-auto px-2 pb-2 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 max-h-[calc(100vh-200px)]">
           {cards?.map((card) => (
             <CardItem
               key={card.id}
@@ -76,11 +76,13 @@ const Column = ({ column, cards, onAddCard }) => {
         </div>
       </SortableContext>
 
-      <AddCardForm
-        showAddCard={showAddCard}
-        setShowAddCard={setShowAddCard}
-        onAddCard={onAddCard}
-      />
+      <div className="px-2 pb-3">
+        <AddCardForm
+          showAddCard={showAddCard}
+          setShowAddCard={setShowAddCard}
+          onAddCard={onAddCard}
+        />
+      </div>
     </div>
   );
 };

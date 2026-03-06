@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useBoard } from "../../context/BoardContext";
+
 import Sidebar from "../Sidebar";
 import Column from "../Column/Column";
 import CardItem from "../CardItem/CardItem";
@@ -9,6 +10,7 @@ import ProfileModal from "./ProfileModal";
 import NewBoardModal from "./NewBoardModal";
 import ShareMenu from "./ShareMenu";
 import ProfileMenu from "./ProfileMenu";
+
 import {
   DndContext,
   DragOverlay,
@@ -16,6 +18,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+
 import {
   SortableContext,
   horizontalListSortingStrategy,
@@ -40,7 +43,9 @@ const Dashboard = () => {
     editCardText,
   } = useBoard();
 
-  // UI state
+  // ----------------------
+  // UI State
+  // ----------------------
   const [activeId, setActiveId] = useState(null);
   const [newColumnName, setNewColumnName] = useState("");
   const [showAddColumn, setShowAddColumn] = useState(false);
@@ -58,7 +63,9 @@ const Dashboard = () => {
   const currentBoard = data?.boards?.[data?.currentBoard];
   const currentBoardUrl = `${window.location.origin}/board/${data?.currentBoard || ""}`;
 
-  // Responsive checks
+  // ----------------------
+  // Responsive Checks
+  // ----------------------
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
@@ -83,7 +90,9 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showProfileMenu, showShareMenu]);
 
-  // DnD setup
+  // ----------------------
+  // Drag & Drop Setup
+  // ----------------------
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
@@ -95,7 +104,9 @@ const Dashboard = () => {
   };
   const handleDragCancel = () => setActiveId(null);
 
-  // Action handlers
+  // ----------------------
+  // Action Handlers
+  // ----------------------
   const handleAddColumn = () => {
     if (newColumnName.trim() && currentBoard) {
       addColumn(data.currentBoard, newColumnName.trim());
@@ -143,7 +154,9 @@ const Dashboard = () => {
       if (["linkedin", "whatsapp"].includes(platform)) {
         const url =
           platform === "linkedin"
-            ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(boardUrl)}`
+            ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                boardUrl,
+              )}`
             : `https://wa.me/?text=${encodeURIComponent(boardTitle + " " + boardUrl)}`;
         window.open(url, "_blank", "noopener,noreferrer");
       } else {
@@ -156,11 +169,14 @@ const Dashboard = () => {
     [currentBoardUrl, currentBoard],
   );
 
-  // Active drag item
+  // ----------------------
+  // Active Drag Item
+  // ----------------------
   const isColumnId = (id) => currentBoard?.columnOrder?.includes(id);
 
   const getActiveDragItem = () => {
     if (!activeId || !currentBoard) return null;
+
     if (isColumnId(activeId)) {
       const activeColumn = currentBoard.columns[activeId];
       const cards = activeColumn.cardIds.map((cardId) => data.cards[cardId]);
@@ -168,12 +184,15 @@ const Dashboard = () => {
     } else if (data.cards?.[activeId]) {
       return { type: "card", data: data.cards[activeId] };
     }
+
     return null;
   };
 
   const activeDragItem = getActiveDragItem();
 
-  // Loading
+  // ----------------------
+  // Loading State
+  // ----------------------
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
@@ -185,6 +204,9 @@ const Dashboard = () => {
     );
   }
 
+  // ----------------------
+  // Render
+  // ----------------------
   return (
     <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter">
       {/* Profile Modal */}
@@ -204,7 +226,7 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Sidebar overlay for mobile */}
+      {/* Sidebar Overlay for Mobile */}
       {isMobile && isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
@@ -214,7 +236,9 @@ const Dashboard = () => {
 
       {/* Sidebar */}
       <div
-        className={`${isMobile ? "fixed inset-y-0 left-0 z-50 transform" : "relative"} ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out w-64 lg:translate-x-0 lg:static flex-shrink-0 bg-gray-900 shadow-2xl`}
+        className={`${
+          isMobile ? "fixed inset-y-0 left-0 z-50 transform" : "relative"
+        } ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out w-64 lg:translate-x-0 lg:static flex-shrink-0 bg-gray-900 shadow-2xl`}
       >
         <div className="flex justify-end p-4 border-b border-gray-700 lg:hidden">
           <button
@@ -237,7 +261,6 @@ const Dashboard = () => {
             </svg>
           </button>
         </div>
-
         <Sidebar
           boards={data.boards}
           currentBoardId={data.currentBoard}
@@ -254,8 +277,9 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Main area */}
+      {/* Main Area */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        {/* Header */}
         <header className="bg-gray-800 bg-opacity-80 backdrop-blur-sm p-4 border-b border-gray-700 sticky top-0 z-20 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -285,15 +309,12 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              {/* Share Menu */}
               <ShareMenu
                 showShareMenu={showShareMenu}
                 setShowShareMenu={setShowShareMenu}
                 onShare={handleShareBoard}
                 currentBoard={currentBoard}
               />
-
-              {/* Profile Menu */}
               <ProfileMenu
                 user={user}
                 showProfileMenu={showProfileMenu}
@@ -319,7 +340,7 @@ const Dashboard = () => {
           </h2>
         </div>
 
-        {/* Main content - columns */}
+        {/* Main Content - Columns */}
         <main className="flex-1 overflow-x-auto overflow-y-hidden p-4">
           {currentBoard ? (
             <DndContext
@@ -338,6 +359,7 @@ const Dashboard = () => {
                     const cards = column.cardIds.map(
                       (cardId) => data.cards[cardId],
                     );
+
                     return (
                       <Column
                         key={columnId}
@@ -369,6 +391,7 @@ const Dashboard = () => {
                   })}
                 </SortableContext>
 
+                {/* Add Column Button */}
                 {showAddColumn ? (
                   <div className="w-72 bg-gray-700 rounded-xl p-3 flex-shrink-0 shadow-lg">
                     <input
@@ -424,6 +447,7 @@ const Dashboard = () => {
                 )}
               </div>
 
+              {/* Drag Overlay */}
               {createPortal(
                 <DragOverlay
                   dropAnimation={{

@@ -45,7 +45,7 @@ const CopyIcon = (props) => (
   </svg>
 );
 
-/* ---------- Component ---------- */
+/* ---------- ShareMenu Component ---------- */
 const ShareMenu = ({
   showShareMenu,
   setShowShareMenu,
@@ -54,6 +54,7 @@ const ShareMenu = ({
 }) => {
   return (
     <div className="relative share-menu-container">
+      {/* ---------------- Toggle Button ---------------- */}
       <button
         onClick={() => setShowShareMenu(!showShareMenu)}
         className="p-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -62,12 +63,17 @@ const ShareMenu = ({
         <ShareIcon className="w-5 h-5" />
       </button>
 
+      {/* ---------------- Dropdown Menu ---------------- */}
       {showShareMenu && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 overflow-hidden z-[100]">
+          {/* Header */}
           <p className="px-4 py-2 text-xs font-semibold text-gray-500 border-b border-gray-200">
             Share Board Link
           </p>
+
+          {/* Share Options */}
           <div className="grid grid-cols-4 gap-1 p-2">
+            {/* Copy URL */}
             <button
               onClick={() => onShare("copy")}
               className="flex flex-col items-center justify-center p-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition group"
@@ -76,6 +82,8 @@ const ShareMenu = ({
               <CopyIcon className="w-6 h-6 text-gray-600 group-hover:text-blue-600 transition" />
               <span className="text-xs mt-1">Copy URL</span>
             </button>
+
+            {/* LinkedIn */}
             <button
               onClick={() => onShare("linkedin")}
               className="flex flex-col items-center justify-center p-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition group"
@@ -84,6 +92,8 @@ const ShareMenu = ({
               <LinkedInIcon className="w-6 h-6 text-[#0A66C2] transition" />
               <span className="text-xs mt-1">LinkedIn</span>
             </button>
+
+            {/* WhatsApp */}
             <button
               onClick={() => onShare("whatsapp")}
               className="flex flex-col items-center justify-center p-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition group"
@@ -92,6 +102,8 @@ const ShareMenu = ({
               <WhatsAppIcon className="w-6 h-6 text-[#25D366] transition" />
               <span className="text-xs mt-1">WhatsApp</span>
             </button>
+
+            {/* GitHub */}
             <button
               onClick={() => onShare("github")}
               className="flex flex-col items-center justify-center p-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition group"

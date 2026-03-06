@@ -34,23 +34,44 @@ const AddBoard = () => {
   };
 
   return (
-    <div>
+    <div className="bg-white/90 backdrop-blur-sm border border-gray-200 rounded-xl shadow-md p-4 space-y-3 w-full max-w-sm hover:shadow-lg transition-all duration-200">
+
       <input
         placeholder="Board Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
         disabled={loading}
+        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
       />
-      <input
-        type="color"
-        value={color}
-        onChange={(e) => setColor(e.target.value)}
+
+      <div className="flex items-center justify-between">
+        <label className="text-xs text-gray-500 font-medium">
+          Board Color
+        </label>
+
+        <input
+          type="color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+          disabled={loading}
+          className="w-10 h-8 rounded border border-gray-200 cursor-pointer"
+        />
+      </div>
+
+      {errorMsg && (
+        <p className="text-red-500 text-xs font-medium bg-red-50 border border-red-200 px-2 py-1 rounded">
+          {errorMsg}
+        </p>
+      )}
+
+      <button
+        onClick={handleAddBoard}
         disabled={loading}
-      />
-      {errorMsg && <p style={{ color: "red", fontSize: "12px" }}>{errorMsg}</p>}
-      <button onClick={handleAddBoard} disabled={loading}>
+        className="w-full py-2 text-sm font-semibold text-white rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 shadow-md hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
         {loading ? "Creating..." : "Add Board"}
       </button>
+
     </div>
   );
 };

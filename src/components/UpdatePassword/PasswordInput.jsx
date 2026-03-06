@@ -14,17 +14,17 @@ const PasswordInput = ({
     if (!showStrength) return { text: "", color: "" };
     if (password.length === 0) return { text: "", color: "" };
     if (password.length < 6)
-      return { text: "Too Short", color: "text-red-600" };
-    if (password.length < 8) return { text: "Weak", color: "text-orange-600" };
-    if (password.length < 12) return { text: "Good", color: "text-yellow-600" };
-    return { text: "Strong", color: "text-green-600" };
+      return { text: "Too Short", color: "text-pink-600" };
+    if (password.length < 8) return { text: "Weak", color: "text-orange-500" };
+    if (password.length < 12) return { text: "Good", color: "text-yellow-500" };
+    return { text: "Strong", color: "text-green-500" };
   };
 
   const strength = getPasswordStrength(value);
 
   return (
     <div className="mt-4">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-purple-700 mb-2">
         {label}
       </label>
       <div className="relative">
@@ -35,15 +35,15 @@ const PasswordInput = ({
           placeholder={placeholder}
           minLength={minLength}
           required
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+          className="w-full px-4 py-3 border border-purple-300 rounded-xl shadow-md placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent pr-10 bg-gradient-to-br from-purple-50 to-pink-50 transition-all"
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          className="absolute inset-y-0 right-0 pr-3 flex items-center transition-colors duration-300"
         >
           <svg
-            className="h-5 w-5 text-gray-400"
+            className={`h-5 w-5 ${showPassword ? "text-pink-500" : "text-purple-400"} transition-colors duration-300`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -67,7 +67,9 @@ const PasswordInput = ({
         </button>
       </div>
       {strength.text && (
-        <p className={`mt-1 text-xs font-medium ${strength.color}`}>
+        <p
+          className={`mt-1 text-xs font-medium ${strength.color} transition-all`}
+        >
           Strength: {strength.text}
         </p>
       )}

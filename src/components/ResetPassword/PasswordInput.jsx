@@ -20,20 +20,22 @@ const PasswordInput = ({
   }, [value, showStrength]);
 
   const strengthColor = {
-    weak: "bg-red-500",
-    fair: "bg-yellow-500",
-    strong: "bg-green-500",
+    weak: "bg-pink-500",
+    fair: "bg-yellow-400",
+    strong: "bg-green-400",
   };
 
   const strengthTextColor = {
-    weak: "text-red-600",
+    weak: "text-pink-600",
     fair: "text-yellow-600",
     strong: "text-green-600",
   };
 
   return (
     <div className="mt-4">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label className="block text-sm font-medium text-purple-700">
+        {label}
+      </label>
       <div className="mt-1 relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -41,7 +43,7 @@ const PasswordInput = ({
           onChange={(e) => onChange(e.target.value)}
           minLength={minLength}
           required
-          className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm pr-10"
+          className="appearance-none block w-full px-3 py-2 border border-purple-300 rounded-xl shadow-md placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent sm:text-sm pr-10 bg-gradient-to-br from-purple-50 to-pink-50 transition-all"
         />
         <button
           type="button"
@@ -49,7 +51,9 @@ const PasswordInput = ({
           onClick={() => setShowPassword(!showPassword)}
         >
           <svg
-            className="h-5 w-5 text-gray-400"
+            className={`h-5 w-5 transition-colors duration-300 ${
+              showPassword ? "text-pink-500" : "text-purple-400"
+            }`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -75,12 +79,12 @@ const PasswordInput = ({
 
       {showStrength && value && (
         <div className="mt-2 flex items-center space-x-2 text-xs">
-          <span className="text-gray-500">Strength:</span>
+          <span className="text-purple-500 font-medium">Strength:</span>
           <div className="flex space-x-1">
             {[1, 2, 3].map((level) => (
               <div
                 key={level}
-                className={`h-1 w-8 rounded-full ${
+                className={`h-1 w-8 rounded-full transition-all duration-300 ${
                   strength === "weak" && level === 1
                     ? strengthColor["weak"]
                     : strength === "fair" && level <= 2
@@ -93,7 +97,9 @@ const PasswordInput = ({
             ))}
           </div>
           <span
-            className={`font-medium ${strengthTextColor[strength] || "text-gray-500"}`}
+            className={`font-medium ${
+              strengthTextColor[strength] || "text-gray-500"
+            }`}
           >
             {strength.charAt(0).toUpperCase() + strength.slice(1)}
           </span>

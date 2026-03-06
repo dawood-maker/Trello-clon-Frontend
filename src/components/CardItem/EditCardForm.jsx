@@ -11,12 +11,12 @@ const EditCardForm = ({ cardText, setCardText, onSave, onCancel }) => {
   };
 
   return (
-    <div onClick={(e) => e.stopPropagation()}>
+    <div onClick={(e) => e.stopPropagation()} className="space-y-2">
       <textarea
         value={cardText}
         onChange={(e) => setCardText(e.target.value)}
         onKeyDown={handleKeyDown}
-        className="w-full border p-2 text-sm rounded mb-2"
+        className="w-full border border-gray-200 p-2.5 text-sm rounded-lg mb-2 bg-white/90 backdrop-blur-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
         rows={3}
         autoFocus
       />
@@ -25,14 +25,14 @@ const EditCardForm = ({ cardText, setCardText, onSave, onCancel }) => {
         <button
           onClick={onSave}
           disabled={!cardText.trim()}
-          className="px-3 py-1 bg-blue-600 text-white text-xs rounded"
+          className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-md shadow-sm hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Save
         </button>
 
         <button
           onClick={onCancel}
-          className="px-3 py-1 bg-gray-300 text-xs rounded"
+          className="px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-medium rounded-md hover:bg-gray-300 transition-all duration-200"
         >
           Cancel
         </button>

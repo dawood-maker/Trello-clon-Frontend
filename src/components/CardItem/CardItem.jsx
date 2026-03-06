@@ -29,7 +29,7 @@ const CardItem = ({ card, columnId, onEditText, onDelete }) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? "transform 0ms" : transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.6 : 1,
     cursor: isDragging ? "grabbing" : "grab",
   };
 
@@ -59,9 +59,11 @@ const CardItem = ({ card, columnId, onEditText, onDelete }) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="bg-white rounded-lg shadow-2xl p-3 border-2 border-blue-400 scale-105"
+        className="bg-white/90 backdrop-blur-md rounded-xl shadow-2xl p-4 border-2 border-blue-500 scale-110 rotate-1 transition-all duration-200"
       >
-        <p className="text-sm font-medium">{card?.text}</p>
+        <p className="text-sm font-semibold text-gray-800 tracking-wide">
+          {card?.text}
+        </p>
       </div>
     );
   }
@@ -73,7 +75,7 @@ const CardItem = ({ card, columnId, onEditText, onDelete }) => {
         style={style}
         {...attributes}
         {...listeners}
-        className="bg-white rounded-lg shadow-sm p-3 border hover:shadow-lg"
+        className="group bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-4 border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
       >
         {isEditing ? (
           <EditCardForm

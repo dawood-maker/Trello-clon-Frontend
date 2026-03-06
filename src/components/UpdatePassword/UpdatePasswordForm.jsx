@@ -56,7 +56,10 @@ const UpdatePasswordForm = ({ email, otp }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Vibrant alert component */}
       <MessageAlert message={message} />
+
+      {/* Password inputs */}
       <PasswordInput
         label="New Password"
         value={newPassword}
@@ -71,10 +74,15 @@ const UpdatePasswordForm = ({ email, otp }) => {
         placeholder="Re-enter password"
       />
 
+      {/* Gradient submit button with shadow and hover */}
       <button
         type="submit"
         disabled={isLoading || !email || !otp}
-        className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex justify-center items-center py-3 px-4 rounded-xl shadow-lg text-sm font-semibold text-white 
+                   bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 
+                   hover:from-pink-500 hover:via-red-500 hover:to-purple-500 
+                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 
+                   disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
       >
         {isLoading ? (
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>

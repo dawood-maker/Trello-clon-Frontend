@@ -15,6 +15,7 @@ const ForgetPassword = () => {
   const { forgotPassword, error, clearError } = useAuth();
   const navigate = useNavigate();
 
+  /* ---------- Handle Form Submission ---------- */
   const handleSubmit = async (e) => {
     console.log("📩 Form Submitted");
     e.preventDefault();
@@ -43,23 +44,24 @@ const ForgetPassword = () => {
     setIsLoading(false);
   };
 
-  // If OTP sent, show OTP component instead of email form
+  /* ---------- Show OTP Screen if OTP Sent ---------- */
   if (otpSent) {
     console.log("🔐 OTP Screen Rendering");
     return <OTP email={email} navigate={navigate} debugOtp={debugOtp} />;
   }
 
+  /* ---------- Main Email Form ---------- */
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-purple-800">
           Reset your password
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-pink-600">
           Or{" "}
           <Link
             to="/login"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-medium text-pink-500 hover:text-purple-600"
           >
             return to login
           </Link>
@@ -67,21 +69,24 @@ const ForgetPassword = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <>
-                {console.log("⚠️ Error Message Displayed:", error)}
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                  {error}
-                </div>
-              </>
-            )}
+        <div className="bg-white py-8 px-6 shadow-2xl sm:rounded-xl sm:px-10 border border-purple-200">
 
+          {/* ---------- Error Message ---------- */}
+          {error && (
+            <>
+              {console.log("⚠️ Error Message Displayed:", error)}
+              <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
+                {error}
+              </div>
+            </>
+          )}
+
+          {/* ---------- Email Form ---------- */}
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-purple-700"
               >
                 Email address
               </label>
@@ -97,7 +102,7 @@ const ForgetPassword = () => {
                     console.log("✏️ Email Changed:", e.target.value);
                     setEmail(e.target.value);
                   }}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-purple-300 rounded-xl shadow-md placeholder-purple-400 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent sm:text-sm transition-all"
                   placeholder="Enter your email"
                 />
               </div>
@@ -107,7 +112,7 @@ const ForgetPassword = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-xl shadow-lg text-sm font-medium text-white bg-gradient-to-r from-pink-500 to-purple-600 hover:from-purple-600 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {isLoading ? (
                   <>
@@ -121,6 +126,7 @@ const ForgetPassword = () => {
               </button>
             </div>
           </form>
+
         </div>
       </div>
     </div>
