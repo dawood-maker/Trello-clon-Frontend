@@ -112,7 +112,7 @@ const Profile = () => {
     return (
       <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-300 to-red-400 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-[#ffffff] border-b-4 border-purple-700 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4  border-b-4 border-purple-700 mx-auto"></div>
           <p className="mt-4 text-white font-semibold text-lg">
             Loading profile...
           </p>
