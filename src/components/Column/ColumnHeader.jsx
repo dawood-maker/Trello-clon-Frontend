@@ -45,12 +45,14 @@ const ColumnHeader = ({ column, cards, attributes, listeners }) => {
         </span>
       </div>
 
-      <ColumnMenu
-        showMenu={showMenu}
-        setShowMenu={setShowMenu}
-        onRename={() => setIsEditing(true)}
-        onDelete={() => deleteColumn(data.currentBoard, column.id)}
-      />
+      <div onPointerDown={(e) => e.stopPropagation()}>
+        <ColumnMenu
+          showMenu={showMenu}
+          setShowMenu={setShowMenu}
+          onRename={() => setIsEditing(true)}
+          onDelete={() => deleteColumn(data.currentBoard, column.id)}
+        />
+      </div>
     </div>
   );
 };

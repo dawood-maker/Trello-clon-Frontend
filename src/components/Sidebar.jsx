@@ -2,7 +2,7 @@ import React from "react";
 
 const Sidebar = ({
   boards,
-  currentBoard,
+  currentBoardId: currentBoard,
   boardOrder,
   onSelectBoard,
   onAddBoard,
@@ -13,7 +13,6 @@ const Sidebar = ({
 }) => {
   return (
     <div className="w-64 bg-[#031926] h-full flex flex-col text-white shadow-2xl">
-      {/* Header - Trello Clone Icon */}
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -46,17 +45,18 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto">
-        {/* My Boards Section */}
         <div className="p-4">
           <h3 className="text-sm font-semibold text-gray-400 mb-3">
             My Boards
           </h3>
-          <div className="space-y-1">
+          <div className="space-y-2">
             {boardOrder && boardOrder.length > 0 ? (
               boardOrder.map((boardId) => {
                 const board = boards[boardId];
+                const isActive = currentBoard === board.id;
+                const boardColor = board.color || "#60A5FA";
+
                 return (
                   <button
                     key={board.id}
@@ -64,22 +64,48 @@ const Sidebar = ({
                       console.log("Board selected:", board);
                       onSelectBoard(board.id);
                     }}
-                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors flex items-center justify-between group ${
-                      currentBoard === board.id
-                        ? "bg-gray-700 text-white"
-                        : "text-gray-300 hover:bg-gray-800"
+                    style={
+                      isActive
+                        ? {
+                            background: `linear-gradient(135deg, ${boardColor}33, ${boardColor}15)`,
+                            borderLeft: `4px solid ${boardColor}`,
+                            boxShadow: `0 0 12px ${boardColor}44, inset 0 0 20px ${boardColor}11`,
+                          }
+                        : {}
+                    }
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center justify-between transition-all duration-300 ${
+                      isActive
+                        ? "text-white font-semibold scale-[1.02]"
+                        : "text-gray-400 hover:bg-white/5 hover:text-white hover:scale-[1.01] border-l-4 border-transparent"
                     }`}
                   >
                     <span className="flex items-center space-x-2 flex-1">
-                      {/* Color Indicator Dot */}
+                      {/* Color dot — glowing when active */}
                       <div
-                        className="w-3 h-3 rounded-sm flex-shrink-0"
-                        style={{ backgroundColor: board.color || "#808080" }}
+                        className="w-3 h-3 rounded-sm flex-shrink-0 transition-all duration-300"
+                        style={{
+                          backgroundColor: boardColor,
+                          boxShadow: isActive
+                            ? `0 0 8px ${boardColor}`
+                            : "none",
+                        }}
                       />
                       <span className="truncate">{board.name}</span>
                     </span>
-                    {currentBoard === board.id && (
-                      <div className="w-2 h-2 bg-gray-400 rounded-sm flex-shrink-0"></div>
+
+                    {/* Active badge */}
+                    {isActive && (
+                      <span
+                        className="text-xs px-2 py-0.5 rounded-full font-bold ml-1 flex-shrink-0 animate-pulse"
+                        style={{
+                          backgroundColor: boardColor,
+                          color: "#fff",
+                          boxShadow: `0 0 8px ${boardColor}`,
+                          fontSize: "10px",
+                        }}
+                      >
+                        ● LIVE
+                      </span>
                     )}
                   </button>
                 );
@@ -91,7 +117,6 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* Footer Buttons */}
       <div className="p-4 border-t border-gray-800 space-y-2">
         <button
           onClick={() => {
@@ -103,7 +128,6 @@ const Sidebar = ({
           <span>+</span>
           <span>New Board</span>
         </button>
-
         <button
           onClick={() => {
             console.log("Reset all button clicked");
