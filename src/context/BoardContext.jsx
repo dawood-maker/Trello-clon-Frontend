@@ -1,4 +1,3 @@
-// src/context/BoardContext.jsx
 import {
   createContext,
   useCallback,
@@ -67,9 +66,23 @@ const transformToLegacy = (boardsArray) => {
 
 export const BoardProvider = ({ children }) => {
   const [boardsRaw, setBoardsRaw] = useState([]);
-  const [currentBoardId, setCurrentBoardId] = useState(null);
+  const [currentBoardId, setCurrentBoardId] = useState(
+    () => localStorage.getItem("currentBoardId") || null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // =============================================
+  // localStorage mein currentBoardId save karo har baar change ho
+  // =============================================
+  const saveCurrentBoard = useCallback((boardId) => {
+    if (boardId) {
+      localStorage.setItem("currentBoardId", boardId);
+    } else {
+      localStorage.removeItem("currentBoardId");
+    }
+    setCurrentBoardId(boardId);
+  }, []);
 
   // =============================================
   // API Helper
@@ -112,9 +125,12 @@ export const BoardProvider = ({ children }) => {
       const fetched = result.boards || [];
       setBoardsRaw(fetched);
       if (fetched.length > 0) {
-        setCurrentBoardId((prev) => prev || fetched[0]._id);
+        // localStorage mein saved board check karo — warna pehla board lo
+        const savedId = localStorage.getItem("currentBoardId");
+        const validId = fetched.find((b) => b._id === savedId)?._id;
+        saveCurrentBoard(validId || fetched[0]._id);
       } else {
-        setCurrentBoardId(null);
+        saveCurrentBoard(null);
       }
     } catch (err) {
       console.error("[BoardContext] loadBoards error:", err.message);
@@ -150,7 +166,7 @@ export const BoardProvider = ({ children }) => {
       });
       const allBoards = result.boards || [];
       setBoardsRaw(allBoards);
-      if (result.board?._id) setCurrentBoardId(result.board._id);
+      if (result.board?._id) saveCurrentBoard(result.board._id);
       return result.board;
     } catch (err) {
       console.error("[BoardContext] addBoard error:", err.message);
@@ -163,8 +179,8 @@ export const BoardProvider = ({ children }) => {
   // SELECT BOARD
   // =============================================
   const selectBoard = useCallback((boardId) => {
-    setCurrentBoardId(boardId);
-  }, []);
+    saveCurrentBoard(boardId);
+  }, [saveCurrentBoard]);
 
   // =============================================
   // DELETE ONE BOARD
@@ -176,7 +192,7 @@ export const BoardProvider = ({ children }) => {
         const allBoards = result.boards || [];
         setBoardsRaw(allBoards);
         if (currentBoardId === boardId) {
-          setCurrentBoardId(allBoards.length > 0 ? allBoards[0]._id : null);
+          saveCurrentBoard(allBoards.length > 0 ? allBoards[0]._id : null);
         }
       } catch (err) {
         console.error("[BoardContext] deleteBoard error:", err.message);
@@ -195,9 +211,9 @@ export const BoardProvider = ({ children }) => {
       const remainingBoards = result.boards || [];
       setBoardsRaw(remainingBoards);
       if (remainingBoards.length > 0) {
-        setCurrentBoardId(remainingBoards[0]._id);
+        saveCurrentBoard(remainingBoards[0]._id);
       } else {
-        setCurrentBoardId(null);
+        saveCurrentBoard(null);
       }
       console.log(
         "[BoardContext] Reset complete. Remaining:",
@@ -314,14 +330,13 @@ export const BoardProvider = ({ children }) => {
   );
 
   // =============================================
-  // ✅ FIXED: DRAG END
+  //  FIXED: DRAG END
   // Column reorder + Same-column card reorder + Cross-column card move
   // =============================================
   const onDragEnd = useCallback(
     async (event) => {
       const { active, over } = event;
 
-      // Agar koi over nahi ya same jagah drop kiya to kuch mat karo
       if (!over || !currentBoardId || active.id === over.id) return;
 
       const board = boardsObj[currentBoardId];
@@ -343,7 +358,6 @@ export const BoardProvider = ({ children }) => {
 
         const newOrder = arrayMove(board.columnOrder, oldIndex, newIndex);
 
-        // Optimistic update
         setBoardsRaw((prev) =>
           prev.map((b) => {
             if (b._id !== currentBoardId) return b;
@@ -366,7 +380,7 @@ export const BoardProvider = ({ children }) => {
       }
 
       // ------------------------------------------
-      // CASE 2: Card drag (same column ya cross column)
+      // CASE 2: Card drag
       // ------------------------------------------
       const cardInfo = allCards[activeId];
       if (!cardInfo) return;
@@ -377,17 +391,45 @@ export const BoardProvider = ({ children }) => {
         : allCards[overId]?.columnId || null;
 
       if (!destColId) {
-        console.warn(
-          "[BoardContext] destColId resolve nahi hua, overId:",
-          overId,
-        );
+        console.warn("[BoardContext] destColId resolve nahi hua, overId:", overId);
         return;
       }
 
       // ------------------------------------------
-      // CASE 2a: Cross-column card move
+      // CASE 2a:  FIXED — Cross-column card move
+      // Pehle galat API call thi: PUT /cards/:id with { columnId }
+      // updateCard controller mein columnId handle nahi hoti thi
+      // Ab sahi API call: PUT /cards/:id/move with proper indices
       // ------------------------------------------
       if (sourceColId !== destColId) {
+        // Source aur destination indices calculate karo
+        const currentBoard = boardsRaw.find((b) => b._id === currentBoardId);
+        const sourceColRaw = currentBoard?.columns.find((c) => c._id === sourceColId);
+        const destColRaw = currentBoard?.columns.find((c) => c._id === destColId);
+
+        const sourceCards = sourceColRaw?.cards || [];
+        const destCards = destColRaw?.cards || [];
+
+        const sourceIndex = sourceCards.findIndex((c) => c._id === activeId);
+
+        // Destination index: agar column pe drop kiya to end mein, warna us card ki position pe
+        let destinationIndex;
+        if (isOverColumn) {
+          destinationIndex = destCards.length; // column ke end mein
+        } else {
+          destinationIndex = destCards.findIndex((c) => c._id === overId);
+          if (destinationIndex === -1) destinationIndex = destCards.length;
+        }
+
+        console.log("[BoardContext] Cross-column move:", {
+          activeId,
+          sourceColId,
+          destColId,
+          sourceIndex,
+          destinationIndex,
+        });
+
+        // Optimistic UI update
         setBoardsRaw((prev) =>
           prev.map((b) => {
             if (b._id !== currentBoardId) return b;
@@ -401,14 +443,10 @@ export const BoardProvider = ({ children }) => {
                   };
                 }
                 if (col._id === destColId) {
-                  const movingCard = allCards[activeId];
-                  return {
-                    ...col,
-                    cards: [
-                      ...(col.cards || []),
-                      { _id: activeId, text: movingCard?.text || "" },
-                    ],
-                  };
+                  const movingCard = { _id: activeId, text: allCards[activeId]?.text || "" };
+                  const newCards = [...(col.cards || [])];
+                  newCards.splice(destinationIndex, 0, movingCard);
+                  return { ...col, cards: newCards };
                 }
                 return col;
               }),
@@ -417,13 +455,17 @@ export const BoardProvider = ({ children }) => {
         );
 
         try {
-          await apiCall(`/cards/${activeId}`, "PUT", { columnId: destColId });
+          //  SAHI API CALL — moveCard controller use karo
+          await apiCall(`/cards/${activeId}/move`, "PUT", {
+            sourceColumnId: sourceColId,
+            destinationColumnId: destColId,
+            sourceIndex: sourceIndex === -1 ? 0 : sourceIndex,
+            destinationIndex,
+          });
+          console.log("[BoardContext]  Card moved & saved to DB successfully");
         } catch (err) {
-          console.error(
-            "[BoardContext] card cross-column move error:",
-            err.message,
-          );
-          await silentRefresh();
+          console.error("[BoardContext] card cross-column move error:", err.message);
+          await silentRefresh(); // Error pe DB se fresh data lo
         }
         return;
       }
@@ -440,6 +482,7 @@ export const BoardProvider = ({ children }) => {
         if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
 
         const newCardIds = arrayMove(sourceCol.cardIds, oldIndex, newIndex);
+
         setBoardsRaw((prev) =>
           prev.map((b) => {
             if (b._id !== currentBoardId) return b;
@@ -466,7 +509,7 @@ export const BoardProvider = ({ children }) => {
         }
       }
     },
-    [currentBoardId, boardsObj, allCards, silentRefresh],
+    [currentBoardId, boardsObj, allCards, boardsRaw, silentRefresh],
   );
 
   // =============================================
