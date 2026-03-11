@@ -6,7 +6,7 @@ import { useBoard } from "../../context/BoardContext";
 import Sidebar from "../Sidebar";
 import Column from "../Column/Column";
 import CardItem from "../CardItem/CardItem";
-import ProfileModal from "./ProfileModal";
+import Index from "../ProfileModal/Index";
 import NewBoardModal from "./NewBoardModal";
 import ShareMenu from "./ShareMenu";
 import ProfileMenu from "./ProfileMenu";
@@ -181,7 +181,7 @@ const Dashboard = () => {
     <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter">
       {/* ✅ ProfileModal — currentUser aur onUserUpdate dono pass ho rahe hain */}
       {showProfileModal && (
-        <ProfileModal
+        <Index
           user={currentUser}
           onClose={() => setShowProfileModal(false)}
           onUserUpdate={handleUserUpdate}
