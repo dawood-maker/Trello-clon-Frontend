@@ -1,81 +1,95 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import CardContent from "./CardContent";
+import { useBoard } from "../../context/BoardContext";
 import EditCardForm from "./EditCardForm";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import CardContent from "./CardContent";
 
-const CardItem = ({ card, columnId, onEditText, onDelete }) => {
+const CardItem = ({
+  card,
+  deleteCard: deleteCardProp,
+  editCardText: editCardTextProp,
+  isDragging = false,
+}) => {
+  // ── Context se functions lo (fallback) ──
+  const { deleteCard: deleteCardCtx, editCardText: editCardTextCtx } = useBoard();
+
+  // Prop available ho to use karo, warna Context ka use karo
+  const deleteCard = deleteCardProp ?? ((id) => deleteCardCtx(id));
+  const editCardText = editCardTextProp ?? ((id, text) => editCardTextCtx(id, text));
+
   const [isEditing, setIsEditing] = useState(false);
   const [cardText, setCardText] = useState(card?.text || "");
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // ── Drag & Drop ──
   const {
+    setNodeRef,
     attributes,
     listeners,
-    setNodeRef,
     transform,
     transition,
-    isDragging,
+    isDragging: isSortableDragging,
   } = useSortable({
-    id: card.id,
-    data: {
-      type: "card",
-      card,
-      columnId,
-    },
+    id: card?.id,
+    data: { type: "card", card },
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? "transform 0ms" : transition,
-    opacity: isDragging ? 0.6 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
+    transition,
+    opacity: isSortableDragging ? 0.3 : 1,
   };
 
-  useEffect(() => {
-    setCardText(card?.text || "");
-  }, [card?.text]);
-
+  // ── Handlers ──
   const handleSave = () => {
-    if (cardText.trim() && cardText !== card.text) {
-      onEditText(cardText.trim());
+    if (cardText.trim()) {
+      editCardText(card.id, cardText.trim());
     }
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setCardText(card.text);
+    setCardText(card?.text || "");
     setIsEditing(false);
   };
 
-  const confirmDelete = () => {
-    onDelete?.();
-    setShowDeleteConfirm(false);
+  // ── Delete — sirf cardId pass karo ──
+  const handleDelete = () => {
+    deleteCard(card.id);
+    setShowDeleteModal(false);
   };
 
+  if (!card) return null;
+
+  // ── Drag Overlay version ──
   if (isDragging) {
     return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="bg-white/90 backdrop-blur-md rounded-xl shadow-2xl p-4 border-2 border-blue-500 scale-110 rotate-1 transition-all duration-200"
-      >
-        <p className="text-sm font-semibold text-gray-800 tracking-wide">
-          {card?.text}
-        </p>
+      <div className="bg-white rounded-xl p-3 shadow-2xl border-2 border-blue-400 w-72 opacity-90">
+        <p className="text-sm text-gray-800 font-medium">{card.text}</p>
       </div>
     );
   }
 
   return (
     <>
+      {/* Delete Confirm Modal */}
+      {showDeleteModal && (
+        <DeleteConfirmModal
+          text={card.text}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+        />
+      )}
+
+      {/* Card */}
       <div
         ref={setNodeRef}
         style={style}
         {...attributes}
         {...listeners}
-        className="group bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-4 border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+        className="bg-white rounded-xl p-3 shadow-md border border-gray-100 hover:shadow-lg hover:border-blue-200 transition-all duration-200 cursor-grab active:cursor-grabbing group"
       >
         {isEditing ? (
           <EditCardForm
@@ -86,21 +100,16 @@ const CardItem = ({ card, columnId, onEditText, onDelete }) => {
           />
         ) : (
           <CardContent
-            text={card?.text}
-            onEdit={() => setIsEditing(true)}
-            onDelete={() => setShowDeleteConfirm(true)}
-            hasDelete={!!onDelete}
+            text={card.text}
+            onEdit={() => {
+              setCardText(card.text);
+              setIsEditing(true);
+            }}
+            onDelete={() => setShowDeleteModal(true)}
+            hasDelete={true}
           />
         )}
       </div>
-
-      {showDeleteConfirm && (
-        <DeleteConfirmModal
-          text={card?.text}
-          onCancel={() => setShowDeleteConfirm(false)}
-          onConfirm={confirmDelete}
-        />
-      )}
     </>
   );
 };

@@ -53,7 +53,7 @@ const Column = ({ column, cards, onAddCard }) => {
     <div
       ref={setNodeRef}
       style={{ ...style, backgroundColor: boardColor }}
-      className="w-72 rounded-2xl flex flex-col shadow-2xl border border-gray-200/50 backdrop-blur-sm transition-all duration-300 hover:shadow-3xl"
+      className="w-72 rounded-2xl flex flex-col shadow-2xl border border-gray-200/50 backdrop-blur-sm transition-all duration-300 hover:shadow-3xl max-h-[calc(100vh-150px)] overflow-hidden"
     >
       <ColumnHeader
         column={column}
@@ -63,7 +63,7 @@ const Column = ({ column, cards, onAddCard }) => {
       />
 
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
-        <div className="overflow-y-auto px-2 pb-2 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 max-h-[calc(100vh-200px)]">
+        <div className="flex-1 min-h-0 overflow-y-auto px-2 pb-2 space-y-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {cards?.map((card) => (
             <CardItem
               key={card.id}

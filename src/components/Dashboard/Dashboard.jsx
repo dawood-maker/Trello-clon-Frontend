@@ -18,7 +18,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
 import {
   SortableContext,
   horizontalListSortingStrategy,
@@ -43,19 +42,15 @@ const Dashboard = () => {
     editCardText,
   } = useBoard();
 
-  // ----------------------
-  // UI State
-  // ----------------------
+  // ── UI State ──
   const [activeId, setActiveId] = useState(null);
   const [newColumnName, setNewColumnName] = useState("");
   const [showAddColumn, setShowAddColumn] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
-  // New Board Modal
   const [showNewBoardModal, setShowNewBoardModal] = useState(false);
   const [newBoardName, setNewBoardName] = useState("");
   const [newBoardColor, setNewBoardColor] = useState("#60A5FA");
@@ -63,9 +58,7 @@ const Dashboard = () => {
   const currentBoard = data?.boards?.[data?.currentBoard];
   const currentBoardUrl = `${window.location.origin}/board/${data?.currentBoard || ""}`;
 
-  // ----------------------
-  // Responsive Checks
-  // ----------------------
+  // ── Responsive ──
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
@@ -78,35 +71,26 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showProfileMenu && !event.target.closest(".profile-menu-container")) {
+    const handleClickOutside = (e) => {
+      if (showProfileMenu && !e.target.closest(".profile-menu-container"))
         setShowProfileMenu(false);
-      }
-      if (showShareMenu && !event.target.closest(".share-menu-container")) {
+      if (showShareMenu && !e.target.closest(".share-menu-container"))
         setShowShareMenu(false);
-      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showProfileMenu, showShareMenu]);
 
-  // ----------------------
-  // Drag & Drop Setup
-  // ----------------------
+  // ── Drag & Drop ──
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
 
-  const handleDragStart = (event) => setActiveId(event?.active?.id || null);
-  const handleDragEnd = (event) => {
-    setActiveId(null);
-    onDragEnd(event);
-  };
+  const handleDragStart = (e) => setActiveId(e?.active?.id || null);
+  const handleDragEnd = (e) => { setActiveId(null); onDragEnd(e); };
   const handleDragCancel = () => setActiveId(null);
 
-  // ----------------------
-  // Action Handlers
-  // ----------------------
+  // ── Add Column ──
   const handleAddColumn = () => {
     if (newColumnName.trim() && currentBoard) {
       addColumn(data.currentBoard, newColumnName.trim());
@@ -115,27 +99,15 @@ const Dashboard = () => {
     }
   };
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
-
-  const handleLogout = () => {
-    setShowProfileMenu(false);
-    logout();
-    navigate("/login");
-  };
-
-  const handleViewProfile = () => {
-    setShowProfileMenu(false);
-    setShowProfileModal(true);
-  };
-
+  // ── Board Handlers ──
+  const handleLogout = () => { setShowProfileMenu(false); logout(); navigate("/login"); };
+  const handleViewProfile = () => { setShowProfileMenu(false); setShowProfileModal(true); };
   const handleOpenNewBoardModal = () => setShowNewBoardModal(true);
-
   const handleCloseNewBoardModal = () => {
     setShowNewBoardModal(false);
     setNewBoardName("");
     setNewBoardColor("#60A5FA");
   };
-
   const handleCreateBoard = async () => {
     if (newBoardName.trim()) {
       await addBoard(newBoardName.trim(), newBoardColor);
@@ -148,73 +120,56 @@ const Dashboard = () => {
   const handleShareBoard = useCallback(
     (platform) => {
       setShowShareMenu(false);
-      const boardUrl = currentBoardUrl;
       const boardTitle = `Check out my ${currentBoard?.name || "Board"}:`;
-
       if (["linkedin", "whatsapp"].includes(platform)) {
         const url =
           platform === "linkedin"
-            ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                boardUrl,
-              )}`
-            : `https://wa.me/?text=${encodeURIComponent(boardTitle + " " + boardUrl)}`;
+            ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentBoardUrl)}`
+            : `https://wa.me/?text=${encodeURIComponent(boardTitle + " " + currentBoardUrl)}`;
         window.open(url, "_blank", "noopener,noreferrer");
       } else {
         navigator.clipboard
-          .writeText(boardUrl)
-          .then(() => alert("Board URL copied to clipboard!"))
-          .catch((err) => console.error("Failed to copy URL:", err));
+          .writeText(currentBoardUrl)
+          .then(() => alert("Board URL copied!"))
+          .catch((err) => console.error("Copy failed:", err));
       }
     },
-    [currentBoardUrl, currentBoard],
+    [currentBoardUrl, currentBoard]
   );
 
-  // ----------------------
-  // Active Drag Item
-  // ----------------------
+  // ── Active Drag Item ──
   const isColumnId = (id) => currentBoard?.columnOrder?.includes(id);
-
   const getActiveDragItem = () => {
     if (!activeId || !currentBoard) return null;
-
     if (isColumnId(activeId)) {
-      const activeColumn = currentBoard.columns[activeId];
-      const cards = activeColumn.cardIds.map((cardId) => data.cards[cardId]);
-      return { type: "column", data: activeColumn, cards };
+      const col = currentBoard.columns[activeId];
+      const cards = col.cardIds.map((id) => data.cards[id]);
+      return { type: "column", data: col, cards };
     } else if (data.cards?.[activeId]) {
       return { type: "card", data: data.cards[activeId] };
     }
-
     return null;
   };
-
   const activeDragItem = getActiveDragItem();
 
-  // ----------------------
-  // Loading State
-  // ----------------------
+  // ── Loading ──
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto" />
           <p className="mt-4 text-white">Loading your boards...</p>
         </div>
       </div>
     );
   }
 
-  // ----------------------
-  // Render
-  // ----------------------
   return (
     <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter">
-      {/* Profile Modal */}
+      {/* Modals */}
       {showProfileModal && (
         <ProfileModal user={user} onClose={() => setShowProfileModal(false)} />
       )}
-
-      {/* New Board Modal */}
       {showNewBoardModal && (
         <NewBoardModal
           newBoardName={newBoardName}
@@ -226,10 +181,10 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Sidebar Overlay for Mobile */}
+      {/* Sidebar Overlay (Mobile) */}
       {isMobile && isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -238,29 +193,10 @@ const Dashboard = () => {
       <div
         className={`${
           isMobile ? "fixed inset-y-0 left-0 z-50 transform" : "relative"
-        } ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300 ease-in-out w-64 lg:translate-x-0 lg:static flex-shrink-0 bg-gray-900 shadow-2xl`}
+        } ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 w-64 lg:translate-x-0 lg:static flex-shrink-0 bg-gray-900 shadow-2xl`}
       >
-        <div className="flex justify-end p-4 border-b border-gray-700 lg:hidden">
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800 transition"
-            title="Close Sidebar"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-          </button>
-        </div>
         <Sidebar
           boards={data.boards}
           currentBoardId={data.currentBoard}
@@ -280,26 +216,16 @@ const Dashboard = () => {
       {/* Main Area */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Header */}
-        <header className="bg-gray-800 bg-opacity-80 backdrop-blur-sm p-4 border-b border-gray-700 sticky top-0 z-20 shadow-lg">
+        <header className="bg-gray-800/80 backdrop-blur-sm p-4 border-b border-gray-700 sticky top-0 z-20 shadow-lg">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               {isMobile && !isSidebarOpen && (
                 <button
-                  onClick={toggleSidebar}
-                  className="p-2 rounded-md text-white hover:bg-gray-700 lg:hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="p-2 rounded-md text-white hover:bg-gray-700 lg:hidden"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
               )}
@@ -307,8 +233,7 @@ const Dashboard = () => {
                 Trello Clone
               </h1>
             </div>
-
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               <ShareMenu
                 showShareMenu={showShareMenu}
                 setShowShareMenu={setShowShareMenu}
@@ -328,19 +253,15 @@ const Dashboard = () => {
 
         {/* Board Title Bar */}
         <div
-          className="px-4 py-3 relative flex-shrink-0"
-          style={{
-            backgroundColor: currentBoard?.color || "#374151",
-            opacity: 0.95,
-            zIndex: 10,
-          }}
+          className="px-4 py-3 flex-shrink-0"
+          style={{ backgroundColor: currentBoard?.color || "#374151" }}
         >
-          <h2 className="text-xl font-bold text-white shadow-text">
+          <h2 className="text-xl font-bold text-white">
             {currentBoard?.name || "My Board"}
           </h2>
         </div>
 
-        {/* Main Content - Columns */}
+        {/* Columns Area */}
         <main className="flex-1 overflow-x-auto overflow-y-hidden p-4">
           {currentBoard ? (
             <DndContext
@@ -349,76 +270,59 @@ const Dashboard = () => {
               onDragEnd={handleDragEnd}
               onDragCancel={handleDragCancel}
             >
-              <div className="flex items-start space-x-4 min-h-full pb-4">
+              <div className="flex items-start gap-4 min-h-full pb-4">
                 <SortableContext
                   items={currentBoard.columnOrder}
                   strategy={horizontalListSortingStrategy}
                 >
                   {currentBoard.columnOrder.map((columnId) => {
                     const column = currentBoard.columns[columnId];
-                    const cards = column.cardIds.map(
-                      (cardId) => data.cards[cardId],
-                    );
-
+                    const cards = column.cardIds.map((id) => data.cards[id]);
                     return (
                       <Column
                         key={columnId}
                         boardId={data.currentBoard}
                         column={column}
                         cards={cards}
-                        onAddCard={(text) =>
-                          addCard(data.currentBoard, columnId, text)
-                        }
-                        deleteColumn={() =>
-                          deleteColumn(data.currentBoard, columnId)
-                        }
-                        renameColumn={(title) =>
-                          renameColumn(data.currentBoard, columnId, title)
-                        }
-                        deleteCard={(cardId) =>
-                          deleteCard(data.currentBoard, columnId, cardId)
-                        }
-                        editCardText={(cardId, text) =>
-                          editCardText(
-                            data.currentBoard,
-                            columnId,
-                            cardId,
-                            text,
-                          )
-                        }
+                        onAddCard={(text) => addCard(data.currentBoard, columnId, text)}
+                        deleteColumn={() => deleteColumn(data.currentBoard, columnId)}
+                        renameColumn={(title) => renameColumn(data.currentBoard, columnId, title)}
+                        deleteCard={(cardId) => deleteCard(data.currentBoard, columnId, cardId)}
+                        editCardText={(cardId, text) => editCardText(data.currentBoard, columnId, cardId, text)}
                       />
                     );
                   })}
                 </SortableContext>
 
-                {/* Add Column Button */}
+                {/* ─────────── Add Another List ─────────── */}
                 {showAddColumn ? (
-                  <div className="w-72 bg-gray-700 rounded-xl p-3 flex-shrink-0 shadow-lg">
+                  <div className="w-72 bg-gray-700 rounded-2xl p-3 flex-shrink-0 shadow-lg">
                     <input
                       type="text"
                       value={newColumnName}
                       onChange={(e) => setNewColumnName(e.target.value)}
                       placeholder="Enter list title..."
-                      className="w-full px-3 py-2 mb-2 text-sm bg-white border-none rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 mb-2 text-sm bg-white border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       autoFocus
-                      onKeyPress={(e) => {
+                      onKeyDown={(e) => {
                         if (e.key === "Enter") handleAddColumn();
+                        if (e.key === "Escape") {
+                          setShowAddColumn(false);
+                          setNewColumnName("");
+                        }
                       }}
                     />
-                    <div className="flex items-center space-x-2">
+                    <div className="flex gap-2">
                       <button
                         onClick={handleAddColumn}
                         disabled={!newColumnName.trim()}
-                        className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         Add list
                       </button>
                       <button
-                        onClick={() => {
-                          setShowAddColumn(false);
-                          setNewColumnName("");
-                        }}
-                        className="p-1 text-white hover:bg-gray-600 rounded text-xl"
+                        onClick={() => { setShowAddColumn(false); setNewColumnName(""); }}
+                        className="px-3 py-1.5 text-white hover:bg-gray-600 rounded-lg text-lg leading-none transition-colors"
                       >
                         ×
                       </button>
@@ -427,20 +331,10 @@ const Dashboard = () => {
                 ) : (
                   <button
                     onClick={() => setShowAddColumn(true)}
-                    className="w-72 bg-gray-700 bg-opacity-50 hover:bg-opacity-70 rounded-xl p-3 text-gray-300 hover:text-white transition-all duration-200 flex items-center justify-start min-h-16 text-base font-medium flex-shrink-0 shadow-md transform hover:scale-[1.01]"
+                    className="w-72 bg-white/10 hover:bg-white/20 rounded-2xl p-3 text-white transition-all duration-200 flex items-center gap-2 min-h-[56px] text-sm font-medium flex-shrink-0 shadow-md"
                   >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                     Add another list
                   </button>
@@ -449,24 +343,14 @@ const Dashboard = () => {
 
               {/* Drag Overlay */}
               {createPortal(
-                <DragOverlay
-                  dropAnimation={{
-                    duration: 100,
-                    easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-                  }}
-                >
+                <DragOverlay dropAnimation={{ duration: 100, easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)" }}>
                   {activeDragItem ? (
                     activeDragItem.type === "column" ? (
-                      <div className="w-72 bg-gray-700 rounded-lg p-3 opacity-90 shadow-2xl border-2 border-blue-400">
-                        <h3 className="text-sm font-semibold text-white mb-2">
-                          {activeDragItem.data.title}
-                        </h3>
+                      <div className="w-72 bg-blue-600 rounded-2xl p-3 opacity-90 shadow-2xl border-2 border-white/50">
+                        <h3 className="text-sm font-bold text-white mb-2">{activeDragItem.data.title}</h3>
                         <div className="space-y-2">
-                          {activeDragItem.cards.slice(0, 3).map((card) => (
-                            <div
-                              key={card.id}
-                              className="bg-white rounded-md p-2 text-sm text-gray-900"
-                            >
+                          {activeDragItem.cards.slice(0, 3).filter(Boolean).map((card) => (
+                            <div key={card.id} className="bg-white rounded-lg p-2 text-sm text-gray-800">
                               {card.text}
                             </div>
                           ))}
@@ -477,18 +361,16 @@ const Dashboard = () => {
                     )
                   ) : null}
                 </DragOverlay>,
-                document.body,
+                document.body
               )}
             </DndContext>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center bg-gray-700 bg-opacity-50 p-8 rounded-xl shadow-2xl">
-                <p className="text-white text-xl mb-6 font-semibold">
-                  No board selected
-                </p>
+              <div className="text-center bg-gray-700/50 p-8 rounded-2xl shadow-2xl">
+                <p className="text-white text-xl mb-6 font-semibold">No board selected</p>
                 <button
                   onClick={handleOpenNewBoardModal}
-                  className="px-8 py-3 bg-white text-gray-900 font-bold rounded-lg hover:bg-gray-100 transition duration-200 focus:outline-none focus:ring-4 focus:ring-white/50 transform hover:scale-[1.02]"
+                  className="px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition duration-200"
                 >
                   Create Your First Board
                 </button>
