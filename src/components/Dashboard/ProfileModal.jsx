@@ -9,7 +9,12 @@ const MaleIcon = () => (
     <ellipse cx="32" cy="52" rx="14" ry="10" fill="#5BA3E8" />
     <circle cx="32" cy="24" r="12" fill="#FDDBB4" />
     <ellipse cx="32" cy="14" rx="12" ry="6" fill="#4A3728" />
-    <path d="M22 42 Q32 46 42 42" stroke="#3A7BD5" strokeWidth="2" fill="none" />
+    <path
+      d="M22 42 Q32 46 42 42"
+      stroke="#3A7BD5"
+      strokeWidth="2"
+      fill="none"
+    />
   </svg>
 );
 
@@ -33,7 +38,6 @@ const OtherIcon = () => (
   </svg>
 );
 
-// ✅ Yahan apna backend URL hai - port 5002
 const BACKEND_URL = "http://localhost:5002";
 
 const ProfileModal = ({ user, onClose, onUserUpdate }) => {
@@ -44,20 +48,21 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // ✅ Avatar: Google pic > gender icon
   const renderAvatar = () => {
     if (user?.profilePicture) {
       return (
         <img
           src={user.profilePicture}
           alt="Profile"
-          className="w-24 h-24 rounded-full object-cover border-4 border-blue-400 shadow-lg"
-          onError={(e) => { e.target.style.display = "none"; }}
+          className="w-20 h-20 rounded-full object-cover border-4 border-blue-400 shadow-lg"
+          onError={(e) => {
+            e.target.style.display = "none";
+          }}
         />
       );
     }
     return (
-      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-400 shadow-lg">
+      <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-blue-400 shadow-lg">
         {user?.gender === "female" ? (
           <FemaleIcon />
         ) : user?.gender === "other" ? (
@@ -69,7 +74,6 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
     );
   };
 
-  // ✅ Save karo name aur gender
   const handleSave = async () => {
     if (!editName.trim()) {
       setError("Name cannot be empty");
@@ -82,7 +86,7 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
       const res = await axios.put(
         `${BACKEND_URL}/api/auth/profile`,
         { name: editName.trim(), gender: editGender },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res.data.success) {
         setSuccess("Profile updated successfully!");
@@ -91,18 +95,30 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
         setTimeout(() => setSuccess(""), 3000);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Update failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Update failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[110] p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl transform transition-all duration-300 scale-100">
-
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[110] px-4 backdrop-blur-sm"
+      style={{ paddingTop: "10px", paddingBottom: "10px" }}
+    >
+      <div
+        className="bg-white rounded-xl w-full max-w-lg shadow-2xl"
+        style={{
+          paddingTop: "14px",
+          paddingBottom: "14px",
+          paddingLeft: "24px",
+          paddingRight: "24px",
+        }}
+      >
         {/* Header */}
-        <div className="flex justify-between items-center border-b pb-3 mb-5">
+        <div className="flex justify-between items-center border-b pb-2 mb-3">
           <h3 className="text-2xl font-extrabold text-gray-900">
             👤 User Profile
           </h3>
@@ -110,41 +126,64 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
             onClick={onClose}
             className="p-1 text-gray-400 hover:text-gray-900 rounded-full transition"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
 
         {/* Avatar */}
-        <div className="flex flex-col items-center mb-5">
+        <div className="flex flex-col items-center mb-3">
           {renderAvatar()}
           {!user?.profilePicture && (
-            <p className="text-xs text-gray-400 mt-2">
-              {user?.gender === "female" ? "👩 Female" : user?.gender === "other" ? "🧑 Other" : "👨 Male"}
+            <p className="text-xs text-gray-400 mt-1">
+              {user?.gender === "female"
+                ? "👩 Female"
+                : user?.gender === "other"
+                  ? "🧑 Other"
+                  : "👨 Male"}
             </p>
           )}
         </div>
 
         {/* Messages */}
         {success && (
-          <div className="mb-3 p-2 bg-green-50 border border-green-300 rounded-lg text-green-700 text-sm text-center">
+          <div className="mb-2 p-2 bg-green-50 border border-green-300 rounded-lg text-green-700 text-sm text-center">
             ✅ {success}
           </div>
         )}
         {error && (
-          <div className="mb-3 p-2 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm text-center">
+          <div className="mb-2 p-2 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm text-center">
             ❌ {error}
           </div>
         )}
 
         {/* Info Fields */}
-        <div className="space-y-4">
-
+        <div className="space-y-3">
           {/* Name */}
           <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-            <svg className="w-8 h-8 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              className="w-8 h-8 text-blue-500 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
             <div className="flex-1">
               <p className="text-sm font-medium text-gray-500">Name</p>
@@ -167,8 +206,18 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
 
           {/* Email */}
           <div className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-            <svg className="w-8 h-8 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <svg
+              className="w-8 h-8 text-blue-500 shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
             </svg>
             <div>
               <p className="text-sm font-medium text-gray-500">Email</p>
@@ -195,18 +244,21 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
                           : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
                       }`}
                     >
-                      {g === "male" ? "👨 Male" : g === "female" ? "👩 Female" : "🧑 Other"}
+                      {g === "male"
+                        ? "👨 Male"
+                        : g === "female"
+                          ? "👩 Female"
+                          : "🧑 Other"}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
           )}
-
         </div>
 
         {/* Buttons */}
-        <div className="mt-6 flex gap-3 justify-end">
+        <div className="mt-4 flex gap-3 justify-end">
           {isEditing ? (
             <>
               <button
@@ -242,7 +294,6 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
             </button>
           )}
         </div>
-
       </div>
     </div>
   );
