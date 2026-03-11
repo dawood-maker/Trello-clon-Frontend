@@ -42,6 +42,14 @@ const Dashboard = () => {
     editCardText,
   } = useBoard();
 
+  // ✅ Local user state — profile update hone par yahan bhi update hoga
+  const [currentUser, setCurrentUser] = useState(user);
+
+  // ✅ Jab bhi AuthContext ka user badle, local state bhi sync ho
+  useEffect(() => {
+    setCurrentUser(user);
+  }, [user]);
+
   // ── UI State ──
   const [activeId, setActiveId] = useState(null);
   const [newColumnName, setNewColumnName] = useState("");
@@ -117,6 +125,11 @@ const Dashboard = () => {
     }
   };
 
+  // ✅ Profile update hone par local state update karo
+  const handleUserUpdate = (updatedUser) => {
+    setCurrentUser(updatedUser);
+  };
+
   const handleShareBoard = useCallback(
     (platform) => {
       setShowShareMenu(false);
@@ -166,9 +179,13 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter">
-      {/* Modals */}
+      {/* ✅ ProfileModal — currentUser aur onUserUpdate dono pass ho rahe hain */}
       {showProfileModal && (
-        <ProfileModal user={user} onClose={() => setShowProfileModal(false)} />
+        <ProfileModal
+          user={currentUser}
+          onClose={() => setShowProfileModal(false)}
+          onUserUpdate={handleUserUpdate}
+        />
       )}
       {showNewBoardModal && (
         <NewBoardModal
@@ -207,7 +224,7 @@ const Dashboard = () => {
           }}
           onAddBoard={handleOpenNewBoardModal}
           onResetAll={resetAll}
-          user={user}
+          user={currentUser}
           onLogout={handleLogout}
           onClose={() => setIsSidebarOpen(false)}
         />
@@ -240,8 +257,9 @@ const Dashboard = () => {
                 onShare={handleShareBoard}
                 currentBoard={currentBoard}
               />
+              {/* ✅ ProfileMenu ko bhi currentUser pass ho raha hai */}
               <ProfileMenu
-                user={user}
+                user={currentUser}
                 showProfileMenu={showProfileMenu}
                 setShowProfileMenu={setShowProfileMenu}
                 onViewProfile={handleViewProfile}
@@ -294,7 +312,7 @@ const Dashboard = () => {
                   })}
                 </SortableContext>
 
-                {/* ─────────── Add Another List ─────────── */}
+                {/* Add Another List */}
                 {showAddColumn ? (
                   <div className="w-72 bg-gray-700 rounded-2xl p-3 flex-shrink-0 shadow-lg">
                     <input
