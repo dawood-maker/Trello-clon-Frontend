@@ -42,10 +42,8 @@ const Dashboard = () => {
     editCardText,
   } = useBoard();
 
-  // ✅ Local user state — profile update hone par yahan bhi update hoga
   const [currentUser, setCurrentUser] = useState(user);
 
-  // ✅ Jab bhi AuthContext ka user badle, local state bhi sync ho
   useEffect(() => {
     setCurrentUser(user);
   }, [user]);
@@ -54,7 +52,7 @@ const Dashboard = () => {
   const [activeId, setActiveId] = useState(null);
   const [newColumnName, setNewColumnName] = useState("");
   const [showAddColumn, setShowAddColumn] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // ✅ Mobile par default closed
   const [isMobile, setIsMobile] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -66,11 +64,12 @@ const Dashboard = () => {
   const currentBoard = data?.boards?.[data?.currentBoard];
   const currentBoardUrl = `${window.location.origin}/board/${data?.currentBoard || ""}`;
 
-  // ── Responsive ──
+  // ── Responsive Check ──
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
+      // Desktop par sidebar hamesha open
       if (!mobile) setIsSidebarOpen(true);
     };
     checkMobile();
@@ -125,7 +124,6 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Profile update hone par local state update karo
   const handleUserUpdate = (updatedUser) => {
     setCurrentUser(updatedUser);
   };
@@ -178,8 +176,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter">
-      {/* ✅ ProfileModal — currentUser aur onUserUpdate dono pass ho rahe hain */}
+    <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter overflow-hidden">
+      {/* Modals */}
       {showProfileModal && (
         <Index
           user={currentUser}
@@ -198,21 +196,22 @@ const Dashboard = () => {
         />
       )}
 
-      {/* Sidebar Overlay (Mobile) */}
+      {/* ✅ Sidebar Overlay - Mobile par click karke band hoga */}
       {isMobile && isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* ✅ Sidebar - Mobile par slide in/out, Desktop par always visible */}
       <div
-        className={`${
-          isMobile ? "fixed inset-y-0 left-0 z-50 transform" : "relative"
-        } ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 w-64 lg:translate-x-0 lg:static flex-shrink-0 bg-gray-900 shadow-2xl`}
+        className={`
+          ${isMobile ? "fixed inset-y-0 left-0 z-50" : "relative flex-shrink-0"}
+          ${isMobile && !isSidebarOpen ? "-translate-x-full" : "translate-x-0"}
+          transition-transform duration-300 ease-in-out
+          w-64 bg-gray-900 shadow-2xl
+        `}
       >
         <Sidebar
           boards={data.boards}
@@ -230,34 +229,43 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Main Area */}
+      {/* ✅ Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Header */}
-        <header className="bg-gray-800/80 backdrop-blur-sm p-4 border-b border-gray-700 sticky top-0 z-20 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {isMobile && !isSidebarOpen && (
-                <button
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="p-2 rounded-md text-white hover:bg-gray-700 lg:hidden"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-              )}
-              <h1 className="text-xl font-bold text-blue-400 hidden lg:block">
+
+        {/* ✅ Header */}
+        <header className="bg-gray-800/90 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-20 shadow-lg">
+          <div className="flex items-center justify-between px-3 py-3 md:px-4 md:py-3">
+            {/* Left: Hamburger + Title */}
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* ✅ Hamburger - Mobile par hamesha dikhega */}
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="p-2 rounded-md text-white hover:bg-gray-700 transition-colors md:hidden"
+                aria-label="Toggle sidebar"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              {/* Desktop title */}
+              <h1 className="text-lg md:text-xl font-bold text-blue-400 hidden md:block">
                 Trello Clone
               </h1>
+              {/* ✅ Mobile par board name header mein dikhao */}
+              <h1 className="text-sm font-bold text-white md:hidden truncate max-w-[140px]">
+                {currentBoard?.name || "Trello Clone"}
+              </h1>
             </div>
-            <div className="flex items-center gap-4">
+
+            {/* Right: Share + Profile */}
+            <div className="flex items-center gap-2 md:gap-4">
               <ShareMenu
                 showShareMenu={showShareMenu}
                 setShowShareMenu={setShowShareMenu}
                 onShare={handleShareBoard}
                 currentBoard={currentBoard}
               />
-              {/* ✅ ProfileMenu ko bhi currentUser pass ho raha hai */}
               <ProfileMenu
                 user={currentUser}
                 showProfileMenu={showProfileMenu}
@@ -269,18 +277,18 @@ const Dashboard = () => {
           </div>
         </header>
 
-        {/* Board Title Bar */}
+        {/* ✅ Board Title Bar - Desktop par dikhega */}
         <div
-          className="px-4 py-3 flex-shrink-0"
+          className="px-4 py-2 md:py-3 flex-shrink-0 hidden md:block"
           style={{ backgroundColor: currentBoard?.color || "#374151" }}
         >
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-lg md:text-xl font-bold text-white">
             {currentBoard?.name || "My Board"}
           </h2>
         </div>
 
-        {/* Columns Area */}
-        <main className="flex-1 overflow-x-auto overflow-y-hidden p-4">
+        {/* ✅ Columns Area - KEY FIX */}
+        <main className="flex-1 overflow-y-auto md:overflow-x-auto md:overflow-y-hidden p-3 md:p-4">
           {currentBoard ? (
             <DndContext
               sensors={sensors}
@@ -288,7 +296,12 @@ const Dashboard = () => {
               onDragEnd={handleDragEnd}
               onDragCancel={handleDragCancel}
             >
-              <div className="flex items-start gap-4 min-h-full pb-4">
+              {/* 
+                ✅ RESPONSIVE LAYOUT:
+                - Mobile (< 768px): flex-col → columns VERTICALLY stack ho jaenge
+                - Desktop (>= 768px): flex-row → columns HORIZONTAL rahenge (original behavior)
+              */}
+              <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4 pb-4 md:min-h-full md:min-w-max">
                 <SortableContext
                   items={currentBoard.columnOrder}
                   strategy={horizontalListSortingStrategy}
@@ -312,9 +325,9 @@ const Dashboard = () => {
                   })}
                 </SortableContext>
 
-                {/* Add Another List */}
+                {/* ✅ Add Another List Button */}
                 {showAddColumn ? (
-                  <div className="w-72 bg-gray-700 rounded-2xl p-3 flex-shrink-0 shadow-lg">
+                  <div className="w-full md:w-72 bg-gray-700 rounded-2xl p-3 flex-shrink-0 shadow-lg">
                     <input
                       type="text"
                       value={newColumnName}
@@ -349,10 +362,11 @@ const Dashboard = () => {
                 ) : (
                   <button
                     onClick={() => setShowAddColumn(true)}
-                    className="w-72 bg-white/10 hover:bg-white/20 rounded-2xl p-3 text-white transition-all duration-200 flex items-center gap-2 min-h-[56px] text-sm font-medium flex-shrink-0 shadow-md"
+                    className="w-full md:w-72 bg-white/10 hover:bg-white/20 rounded-2xl p-3 text-white transition-all duration-200 flex items-center gap-2 min-h-[48px] md:min-h-[56px] text-sm font-medium flex-shrink-0 shadow-md"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                     Add another list
                   </button>
@@ -365,7 +379,9 @@ const Dashboard = () => {
                   {activeDragItem ? (
                     activeDragItem.type === "column" ? (
                       <div className="w-72 bg-blue-600 rounded-2xl p-3 opacity-90 shadow-2xl border-2 border-white/50">
-                        <h3 className="text-sm font-bold text-white mb-2">{activeDragItem.data.title}</h3>
+                        <h3 className="text-sm font-bold text-white mb-2">
+                          {activeDragItem.data.title}
+                        </h3>
                         <div className="space-y-2">
                           {activeDragItem.cards.slice(0, 3).filter(Boolean).map((card) => (
                             <div key={card.id} className="bg-white rounded-lg p-2 text-sm text-gray-800">
@@ -384,11 +400,13 @@ const Dashboard = () => {
             </DndContext>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <div className="text-center bg-gray-700/50 p-8 rounded-2xl shadow-2xl">
-                <p className="text-white text-xl mb-6 font-semibold">No board selected</p>
+              <div className="text-center bg-gray-700/50 p-6 md:p-8 rounded-2xl shadow-2xl mx-4">
+                <p className="text-white text-lg md:text-xl mb-6 font-semibold">
+                  No board selected
+                </p>
                 <button
                   onClick={handleOpenNewBoardModal}
-                  className="px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition duration-200"
+                  className="px-6 md:px-8 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition duration-200"
                 >
                   Create Your First Board
                 </button>
