@@ -62,10 +62,9 @@ const ProfileAvatar = ({ user }) => {
 
   return (
     <div className="flex flex-col items-center mb-2 sm:mb-4">
-      {/* Glowing animated ring */}
+      {/* ✅ animation wali line REMOVE kar di */}
       <div
         className={`relative p-1 rounded-full bg-gradient-to-br ${config.bg} ${config.glow}`}
-        style={{ animation: "pulse 3s ease-in-out infinite" }}
       >
         <div className="p-0.5 rounded-full bg-white">
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden">
