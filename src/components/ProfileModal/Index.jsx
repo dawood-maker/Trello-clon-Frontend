@@ -8,49 +8,11 @@ import ProfileActions from "./ProfileActions";
 const BACKEND_URL = "http://localhost:5002";
 
 const FEMALE_NAMES = [
-  "alisha","ayesha","fatima","zara","sara","sarah","maria","hina","nida","sana",
-  "rabia","amina","amna","asma","bushra","fiza","hira","iqra","kiran","layla",
-  "laila","maham","maryam","mehwish","nadia","noor","rida","rimsha","robia",
-  "roshni","saima","samia","shazia","sidra","sobia","sonia","sumaira","tayyaba",
-  "umber","urwa","uzma","zainab","zeba","zunaira","alice","emma","olivia",
-  "sophia","isabella","mia","amelia","harper","evelyn","abigail","emily",
-  "elizabeth","sofia","avery","ella","scarlett","grace","chloe","victoria",
-  "riley","aria","lily","aurora","zoey","penelope","nora","luna","ellie",
-  "hazel","violet","natalie","isla","leah","eleanor","hannah","lillian",
-  "addison","aubrey","anna","stella","natalia","zoe","leila","savannah",
-  "camila","yara","yasmin","yasmeen","pari","parisa","priya","pooja","neha",
-  "anjali","kavya","ananya","shruti","divya","meera","simran","jasmine",
-  "jasmin","nina","clara","diana","eva","kate","katie","jessica","jennifer",
-  "linda","lisa","mary","patricia","barbara","susan","karen","nancy","betty",
-  "margaret","sandra","ashley","dorothy","kimberly","donna","michelle","carol",
-  "amanda","melissa","deborah","stephanie","rebecca","sharon","laura","cynthia",
-  "kathleen","amy","angela","shirley","brenda","pamela","nicole","helen",
-  "samantha","katherine","shirin","reem","rima","hana","hanan","lina","dina",
-  "rana","rania","saba","sabah","sabrina","sahar","salma","samira","shaimaa",
-  "shaista","sharmin","shohreh",
+  "alisha"
 ];
 
 const MALE_NAMES = [
-  "ali","ahmed","muhammad","usman","hassan","hussain","ibrahim","ismail","imran",
-  "kamran","khalid","majid","mansoor","mohsin","mudassar","munir","naeem",
-  "naveed","omar","osama","rashid","salman","shahid","shahzad","shoaib","sohail",
-  "tariq","umar","waqar","waseem","yasir","zain","zubair","bilal","faisal",
-  "fahad","farhan","farooq","hamza","haroon","asad","asif","aamir","adil",
-  "adnan","akbar","akram","arif","amir","dawood","danish","daniyal","ehsan",
-  "fawad","ghulam","james","john","robert","michael","william","david","richard",
-  "joseph","thomas","charles","christopher","daniel","matthew","anthony","mark",
-  "donald","steven","paul","andrew","joshua","kenneth","kevin","brian","george",
-  "timothy","ronald","edward","jason","jeffrey","ryan","jacob","gary","nicholas",
-  "eric","jonathan","stephen","larry","justin","scott","brandon","benjamin",
-  "samuel","raymond","gregory","frank","alexander","patrick","jack","dennis",
-  "jerry","tyler","aaron","jose","adam","henry","nathan","douglas","zachary",
-  "peter","kyle","noah","liam","oliver","elijah","lucas","mason","logan","ethan",
-  "aiden","jackson","sebastian","carter","owen","caleb","dylan","leo","gabriel",
-  "julian","mateo","rahul","rajan","raj","rohit","rohan","arjun","arun","suresh",
-  "ramesh","mahesh","dinesh","vikas","vikram","raza","rehan","rehman","rizwan",
-  "rahim","rafiq","saad","saeed","sajid","sami","sarfraz","shafiq","shakeel",
-  "sharjeel","sufyan","sultan","talha","tanveer","tauseef","waleed","waheed",
-  "waqas","yousuf","yusuf","zafar","zahid","zahir","zaman","zeeshan","zia",
+  "ali"
 ];
 
 const validateNameGender = (name, gender) => {
