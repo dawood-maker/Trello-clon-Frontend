@@ -38,7 +38,9 @@ const ProfileAvatar = ({ user }) => {
     console.log("🖼️ [ProfileAvatar] Showing profile picture from URL");
     return (
       <div className="flex flex-col items-center mb-2 sm:mb-4">
-        <div className={`relative p-1 rounded-full bg-gradient-to-br ${config.bg}`}>
+        <div
+          className={`relative p-1 rounded-full bg-gradient-to-br ${config.bg}`}
+        >
           <div className="p-0.5 rounded-full bg-white">
             <img
               src={user.profilePicture}
@@ -51,7 +53,9 @@ const ProfileAvatar = ({ user }) => {
             />
           </div>
         </div>
-        <span className={`mt-1.5 sm:mt-2 px-2 sm:px-3 py-0.5 text-xs font-semibold rounded-full border ${config.badge}`}>
+        <span
+          className={`mt-1.5 sm:mt-2 px-2 sm:px-3 py-0.5 text-xs font-semibold rounded-full border ${config.badge}`}
+        >
           {config.label}
         </span>
       </div>
@@ -78,7 +82,9 @@ const ProfileAvatar = ({ user }) => {
           </div>
         </div>
       </div>
-      <span className={`mt-1.5 sm:mt-2 px-2 sm:px-3 py-0.5 text-xs font-semibold rounded-full border ${config.badge}`}>
+      <span
+        className={`mt-1.5 sm:mt-2 px-2 sm:px-3 py-0.5 text-xs font-semibold rounded-full border ${config.badge}`}
+      >
         {config.label}
       </span>
     </div>
