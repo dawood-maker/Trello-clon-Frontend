@@ -45,23 +45,23 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
   const fileInputRef = useRef(null);
 
   const handleFileChange = (file) => {
-    console.log("📁 handleFileChange called | file:", file?.name, "| size:", file?.size, "| type:", file?.type);
+    console.log(" handleFileChange called | file:", file?.name, "| size:", file?.size, "| type:", file?.type);
     if (!file) { console.warn("⚠️ No file provided"); return; }
     if (!file.type.startsWith("image/")) {
-      console.error("❌ Invalid file type:", file.type);
+      console.error(" Invalid file type:", file.type);
       setError("Sirf image files allowed hain (JPG, PNG, WEBP)");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      console.error("❌ File too large:", file.size, "bytes");
+      console.error(" File too large:", file.size, "bytes");
       setError("Image 5MB se chhoti honi chahiye");
       return;
     }
-    console.log("✅ File valid, converting to base64...");
+    console.log(" File valid, converting to base64...");
     setError("");
     const reader = new FileReader();
     reader.onloadend = () => {
-      console.log("✅ base64 conversion complete | length:", reader.result?.length);
+      console.log(" base64 conversion complete | length:", reader.result?.length);
       setPreviewPic(reader.result);
     };
     reader.readAsDataURL(file);
@@ -94,23 +94,23 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
         { name: editName.trim(), gender: editGender, profilePicture: previewPic },
         { withCredentials: true },
       );
-      console.log("✅ PUT response:", res.data);
+      console.log(" PUT response:", res.data);
 
       if (res.data.success) {
-        // ✅ localStorage update — refresh par bhi photo rahegi
+        //  localStorage update — refresh par bhi photo rahegi
         const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
         const updatedUser = { ...existingUser, ...res.data.user };
         localStorage.setItem("user", JSON.stringify(updatedUser));
-        console.log("✅ localStorage updated | hasPhoto:", !!updatedUser.profilePicture);
+        console.log(" localStorage updated | hasPhoto:", !!updatedUser.profilePicture);
 
-        setSuccess("Profile successfully update ho gaya! ✅");
+        setSuccess("Profile successfully update ho gaya! ");
         setIsEditing(false);
-        console.log("✅ Profile updated | updatedUser:", updatedUser);
+        console.log(" Profile updated | updatedUser:", updatedUser);
         if (onUserUpdate) onUserUpdate(updatedUser);
         setTimeout(() => setSuccess(""), 3000);
       }
     } catch (err) {
-      console.error("❌ handleSave error:", err.response?.data || err.message);
+      console.error(" handleSave error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Update failed. Dobara koshish karein.");
     } finally {
       setLoading(false);
@@ -119,7 +119,7 @@ const ProfileModal = ({ user, onClose, onUserUpdate }) => {
   };
 
   const handleCancel = () => {
-    console.log("❎ handleCancel called");
+    console.log(" handleCancel called");
     setIsEditing(false);
     setEditName(user?.name || "");
     setEditGender(user?.gender || "male");
