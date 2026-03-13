@@ -6,7 +6,7 @@ import { useBoard } from "../../context/BoardContext";
 import Sidebar from "../Sidebar";
 import Column from "../Column/Column";
 import CardItem from "../CardItem/CardItem";
-import Index from "../ProfileModal/Index";
+import Index from "./ProfileModal/index"; // ✅ FIX: ../ProfileModal → ./ProfileModal
 import NewBoardModal from "./NewBoardModal";
 import ShareMenu from "./ShareMenu";
 import ProfileMenu from "./ProfileMenu";
@@ -42,17 +42,32 @@ const Dashboard = () => {
     editCardText,
   } = useBoard();
 
-  const [currentUser, setCurrentUser] = useState(user);
+  const getLatestUser = () => {
+    try {
+      const stored = localStorage.getItem("user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        console.log("📦 Dashboard: loaded user from localStorage:", parsed?.name, "| hasPhoto:", !!parsed?.profilePicture);
+        return parsed;
+      }
+    } catch (e) {
+      console.error("❌ Dashboard: localStorage parse error:", e);
+    }
+    return user;
+  };
+
+  const [currentUser, setCurrentUser] = useState(getLatestUser);
 
   useEffect(() => {
-    setCurrentUser(user);
+    const latestUser = getLatestUser();
+    console.log("🔄 Dashboard useEffect: user changed | hasPhoto:", !!latestUser?.profilePicture);
+    setCurrentUser(latestUser);
   }, [user]);
 
-  // ── UI State ──
   const [activeId, setActiveId] = useState(null);
   const [newColumnName, setNewColumnName] = useState("");
   const [showAddColumn, setShowAddColumn] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // ✅ Mobile par default closed
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
@@ -64,12 +79,10 @@ const Dashboard = () => {
   const currentBoard = data?.boards?.[data?.currentBoard];
   const currentBoardUrl = `${window.location.origin}/board/${data?.currentBoard || ""}`;
 
-  // ── Responsive Check ──
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      // Desktop par sidebar hamesha open
       if (!mobile) setIsSidebarOpen(true);
     };
     checkMobile();
@@ -88,7 +101,6 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showProfileMenu, showShareMenu]);
 
-  // ── Drag & Drop ──
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
@@ -97,7 +109,6 @@ const Dashboard = () => {
   const handleDragEnd = (e) => { setActiveId(null); onDragEnd(e); };
   const handleDragCancel = () => setActiveId(null);
 
-  // ── Add Column ──
   const handleAddColumn = () => {
     if (newColumnName.trim() && currentBoard) {
       addColumn(data.currentBoard, newColumnName.trim());
@@ -106,7 +117,6 @@ const Dashboard = () => {
     }
   };
 
-  // ── Board Handlers ──
   const handleLogout = () => { setShowProfileMenu(false); logout(); navigate("/login"); };
   const handleViewProfile = () => { setShowProfileMenu(false); setShowProfileModal(true); };
   const handleOpenNewBoardModal = () => setShowNewBoardModal(true);
@@ -125,7 +135,11 @@ const Dashboard = () => {
   };
 
   const handleUserUpdate = (updatedUser) => {
-    setCurrentUser(updatedUser);
+    console.log("👤 Dashboard handleUserUpdate called | hasPhoto:", !!updatedUser?.profilePicture);
+    const merged = { ...currentUser, ...updatedUser };
+    localStorage.setItem("user", JSON.stringify(merged));
+    console.log("✅ Dashboard: localStorage updated with new user");
+    setCurrentUser(merged);
   };
 
   const handleShareBoard = useCallback(
@@ -148,7 +162,6 @@ const Dashboard = () => {
     [currentBoardUrl, currentBoard]
   );
 
-  // ── Active Drag Item ──
   const isColumnId = (id) => currentBoard?.columnOrder?.includes(id);
   const getActiveDragItem = () => {
     if (!activeId || !currentBoard) return null;
@@ -163,7 +176,6 @@ const Dashboard = () => {
   };
   const activeDragItem = getActiveDragItem();
 
-  // ── Loading ──
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
@@ -177,7 +189,6 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen flex bg-gradient-to-br from-gray-800 to-gray-900 font-inter overflow-hidden">
-      {/* Modals */}
       {showProfileModal && (
         <Index
           user={currentUser}
@@ -196,7 +207,6 @@ const Dashboard = () => {
         />
       )}
 
-      {/* ✅ Sidebar Overlay - Mobile par click karke band hoga */}
       {isMobile && isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/60 z-40 lg:hidden"
@@ -204,7 +214,6 @@ const Dashboard = () => {
         />
       )}
 
-      {/* ✅ Sidebar - Mobile par slide in/out, Desktop par always visible */}
       <div
         className={`
           ${isMobile ? "fixed inset-y-0 left-0 z-50" : "relative flex-shrink-0"}
@@ -229,15 +238,10 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* ✅ Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-
-        {/* ✅ Header */}
         <header className="bg-gray-800/90 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-20 shadow-lg">
           <div className="flex items-center justify-between px-3 py-3 md:px-4 md:py-3">
-            {/* Left: Hamburger + Title */}
             <div className="flex items-center gap-2 md:gap-4">
-              {/* ✅ Hamburger - Mobile par hamesha dikhega */}
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="p-2 rounded-md text-white hover:bg-gray-700 transition-colors md:hidden"
@@ -248,17 +252,13 @@ const Dashboard = () => {
                     d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              {/* Desktop title */}
               <h1 className="text-lg md:text-xl font-bold text-blue-400 hidden md:block">
                 Trello Clone
               </h1>
-              {/* ✅ Mobile par board name header mein dikhao */}
               <h1 className="text-sm font-bold text-white md:hidden truncate max-w-[140px]">
                 {currentBoard?.name || "Trello Clone"}
               </h1>
             </div>
-
-            {/* Right: Share + Profile */}
             <div className="flex items-center gap-2 md:gap-4">
               <ShareMenu
                 showShareMenu={showShareMenu}
@@ -277,7 +277,6 @@ const Dashboard = () => {
           </div>
         </header>
 
-        {/* ✅ Board Title Bar - Desktop par dikhega */}
         <div
           className="px-4 py-2 md:py-3 flex-shrink-0 hidden md:block"
           style={{ backgroundColor: currentBoard?.color || "#374151" }}
@@ -287,7 +286,6 @@ const Dashboard = () => {
           </h2>
         </div>
 
-        {/* ✅ Columns Area - KEY FIX */}
         <main className="flex-1 overflow-y-auto md:overflow-x-auto md:overflow-y-hidden p-3 md:p-4">
           {currentBoard ? (
             <DndContext
@@ -296,11 +294,6 @@ const Dashboard = () => {
               onDragEnd={handleDragEnd}
               onDragCancel={handleDragCancel}
             >
-              {/* 
-                ✅ RESPONSIVE LAYOUT:
-                - Mobile (< 768px): flex-col → columns VERTICALLY stack ho jaenge
-                - Desktop (>= 768px): flex-row → columns HORIZONTAL rahenge (original behavior)
-              */}
               <div className="flex flex-col md:flex-row md:items-start gap-3 md:gap-4 pb-4 md:min-h-full md:min-w-max">
                 <SortableContext
                   items={currentBoard.columnOrder}
@@ -325,7 +318,6 @@ const Dashboard = () => {
                   })}
                 </SortableContext>
 
-                {/* ✅ Add Another List Button */}
                 {showAddColumn ? (
                   <div className="w-full md:w-72 bg-gray-700 rounded-2xl p-3 flex-shrink-0 shadow-lg">
                     <input
@@ -373,7 +365,6 @@ const Dashboard = () => {
                 )}
               </div>
 
-              {/* Drag Overlay */}
               {createPortal(
                 <DragOverlay dropAnimation={{ duration: 100, easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)" }}>
                   {activeDragItem ? (
