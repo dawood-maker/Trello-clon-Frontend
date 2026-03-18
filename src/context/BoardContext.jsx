@@ -1,3 +1,4 @@
+// Frontend/src/context/BoardContext.jsx
 import {
   createContext,
   useCallback,
@@ -6,6 +7,7 @@ import {
   useState,
 } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
+import { fixHexColor } from "../utils/colorUtils"; // ✅ nai utility
 
 const API_URL = "http://localhost:5002/api";
 const BoardContext = createContext();
@@ -72,9 +74,6 @@ export const BoardProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // =============================================
-  // localStorage mein currentBoardId save karo har baar change ho
-  // =============================================
   const saveCurrentBoard = useCallback((boardId) => {
     if (boardId) {
       localStorage.setItem("currentBoardId", boardId);
@@ -84,9 +83,6 @@ export const BoardProvider = ({ children }) => {
     setCurrentBoardId(boardId);
   }, []);
 
-  // =============================================
-  // API Helper
-  // =============================================
   const apiCall = async (endpoint, method = "GET", body = null) => {
     const options = {
       method,
@@ -100,9 +96,6 @@ export const BoardProvider = ({ children }) => {
     return result;
   };
 
-  // =============================================
-  // SILENT REFRESH — UI flicker nahi hoga
-  // =============================================
   const silentRefresh = useCallback(async () => {
     try {
       const result = await apiCall("/boards");
@@ -114,9 +107,6 @@ export const BoardProvider = ({ children }) => {
     }
   }, []);
 
-  // =============================================
-  // INITIAL LOAD
-  // =============================================
   const loadBoards = useCallback(async () => {
     try {
       setLoading(true);
@@ -125,7 +115,6 @@ export const BoardProvider = ({ children }) => {
       const fetched = result.boards || [];
       setBoardsRaw(fetched);
       if (fetched.length > 0) {
-        // localStorage mein saved board check karo — warna pehla board lo
         const savedId = localStorage.getItem("currentBoardId");
         const validId = fetched.find((b) => b._id === savedId)?._id;
         saveCurrentBoard(validId || fetched[0]._id);
@@ -155,12 +144,20 @@ export const BoardProvider = ({ children }) => {
 
   // =============================================
   // ADD BOARD
+  // ✅ FIX: fixHexColor auto-fix karta hai — koi error nahi
+  //    #60A5   → #60A500  (pad with zeros)
+  //    #ABC    → #ABC     (3-digit valid)
+  //    #60A5FA → #60A5FA  (already valid)
+  //    garbage → #6B7280  (fallback gray)
   // =============================================
   const addBoard = useCallback(async (name, color) => {
+    const safeColor = fixHexColor(color); // ✅ auto-fix
+    console.log("[BoardContext] color fix:", color, "→", safeColor);
+
     try {
       const result = await apiCall("/boards", "POST", {
         name,
-        color,
+        color: safeColor,
         description: "",
         isPublic: false,
       });
@@ -175,16 +172,13 @@ export const BoardProvider = ({ children }) => {
     }
   }, []);
 
-  // =============================================
-  // SELECT BOARD
-  // =============================================
-  const selectBoard = useCallback((boardId) => {
-    saveCurrentBoard(boardId);
-  }, [saveCurrentBoard]);
+  const selectBoard = useCallback(
+    (boardId) => {
+      saveCurrentBoard(boardId);
+    },
+    [saveCurrentBoard]
+  );
 
-  // =============================================
-  // DELETE ONE BOARD
-  // =============================================
   const deleteBoard = useCallback(
     async (boardId) => {
       try {
@@ -198,12 +192,9 @@ export const BoardProvider = ({ children }) => {
         console.error("[BoardContext] deleteBoard error:", err.message);
       }
     },
-    [currentBoardId],
+    [currentBoardId]
   );
 
-  // =============================================
-  // RESET ALL
-  // =============================================
   const resetAll = useCallback(async () => {
     try {
       console.log("[BoardContext] Reset All called...");
@@ -215,10 +206,6 @@ export const BoardProvider = ({ children }) => {
       } else {
         saveCurrentBoard(null);
       }
-      console.log(
-        "[BoardContext] Reset complete. Remaining:",
-        remainingBoards.length,
-      );
     } catch (err) {
       console.error("[BoardContext] resetAll error:", err.message);
       setError(err.message);
@@ -226,9 +213,6 @@ export const BoardProvider = ({ children }) => {
     }
   }, [silentRefresh]);
 
-  // =============================================
-  // ADD COLUMN
-  // =============================================
   const addColumn = useCallback(
     async (boardId, title) => {
       try {
@@ -238,12 +222,9 @@ export const BoardProvider = ({ children }) => {
         console.error("[BoardContext] addColumn error:", err.message);
       }
     },
-    [silentRefresh],
+    [silentRefresh]
   );
 
-  // =============================================
-  // DELETE COLUMN
-  // =============================================
   const deleteColumn = useCallback(
     async (boardId, columnId) => {
       try {
@@ -253,12 +234,9 @@ export const BoardProvider = ({ children }) => {
         console.error("[BoardContext] deleteColumn error:", err.message);
       }
     },
-    [silentRefresh],
+    [silentRefresh]
   );
 
-  // =============================================
-  // RENAME COLUMN
-  // =============================================
   const renameColumn = useCallback(
     async (boardId, columnId, title) => {
       try {
@@ -268,12 +246,9 @@ export const BoardProvider = ({ children }) => {
         console.error("[BoardContext] renameColumn error:", err.message);
       }
     },
-    [silentRefresh],
+    [silentRefresh]
   );
 
-  // =============================================
-  // ADD CARD
-  // =============================================
   const addCard = useCallback(
     async (boardId, columnId, text) => {
       try {
@@ -283,12 +258,9 @@ export const BoardProvider = ({ children }) => {
         console.error("[BoardContext] addCard error:", err.message);
       }
     },
-    [silentRefresh],
+    [silentRefresh]
   );
 
-  // =============================================
-  // DELETE CARD
-  // =============================================
   const deleteCard = useCallback(
     async (...args) => {
       const cardId = args.length === 1 ? args[0] : args[2];
@@ -297,19 +269,15 @@ export const BoardProvider = ({ children }) => {
           console.error("[BoardContext] deleteCard: invalid cardId:", cardId);
           return;
         }
-        console.log("[BoardContext] Deleting card:", cardId);
         await apiCall(`/cards/${cardId}`, "DELETE");
         await silentRefresh();
       } catch (err) {
         console.error("[BoardContext] deleteCard error:", err.message);
       }
     },
-    [silentRefresh],
+    [silentRefresh]
   );
 
-  // =============================================
-  // EDIT CARD TEXT
-  // =============================================
   const editCardText = useCallback(
     async (...args) => {
       const cardId = args.length === 2 ? args[0] : args[2];
@@ -319,24 +287,18 @@ export const BoardProvider = ({ children }) => {
           console.error("[BoardContext] editCardText: invalid cardId:", cardId);
           return;
         }
-        console.log("[BoardContext] Updating card:", cardId, "->", newText);
         await apiCall(`/cards/${cardId}`, "PUT", { text: newText });
         await silentRefresh();
       } catch (err) {
         console.error("[BoardContext] editCardText error:", err.message);
       }
     },
-    [silentRefresh],
+    [silentRefresh]
   );
 
-  // =============================================
-  //  FIXED: DRAG END
-  // Column reorder + Same-column card reorder + Cross-column card move
-  // =============================================
   const onDragEnd = useCallback(
     async (event) => {
       const { active, over } = event;
-
       if (!over || !currentBoardId || active.id === over.id) return;
 
       const board = boardsObj[currentBoardId];
@@ -348,9 +310,6 @@ export const BoardProvider = ({ children }) => {
       const isActiveColumn = board.columnOrder.includes(activeId);
       const isOverColumn = board.columnOrder.includes(overId);
 
-      // ------------------------------------------
-      // CASE 1: Column reorder
-      // ------------------------------------------
       if (isActiveColumn && isOverColumn) {
         const oldIndex = board.columnOrder.indexOf(activeId);
         const newIndex = board.columnOrder.indexOf(overId);
@@ -365,7 +324,7 @@ export const BoardProvider = ({ children }) => {
               .map((colId) => b.columns.find((c) => c._id === colId))
               .filter(Boolean);
             return { ...b, columns: reordered };
-          }),
+          })
         );
 
         try {
@@ -379,9 +338,6 @@ export const BoardProvider = ({ children }) => {
         return;
       }
 
-      // ------------------------------------------
-      // CASE 2: Card drag
-      // ------------------------------------------
       const cardInfo = allCards[activeId];
       if (!cardInfo) return;
 
@@ -390,46 +346,29 @@ export const BoardProvider = ({ children }) => {
         ? overId
         : allCards[overId]?.columnId || null;
 
-      if (!destColId) {
-        console.warn("[BoardContext] destColId resolve nahi hua, overId:", overId);
-        return;
-      }
+      if (!destColId) return;
 
-      // ------------------------------------------
-      // CASE 2a:  FIXED — Cross-column card move
-      // Pehle galat API call thi: PUT /cards/:id with { columnId }
-      // updateCard controller mein columnId handle nahi hoti thi
-      // Ab sahi API call: PUT /cards/:id/move with proper indices
-      // ------------------------------------------
       if (sourceColId !== destColId) {
-        // Source aur destination indices calculate karo
         const currentBoard = boardsRaw.find((b) => b._id === currentBoardId);
-        const sourceColRaw = currentBoard?.columns.find((c) => c._id === sourceColId);
-        const destColRaw = currentBoard?.columns.find((c) => c._id === destColId);
+        const sourceColRaw = currentBoard?.columns.find(
+          (c) => c._id === sourceColId
+        );
+        const destColRaw = currentBoard?.columns.find(
+          (c) => c._id === destColId
+        );
 
         const sourceCards = sourceColRaw?.cards || [];
         const destCards = destColRaw?.cards || [];
-
         const sourceIndex = sourceCards.findIndex((c) => c._id === activeId);
 
-        // Destination index: agar column pe drop kiya to end mein, warna us card ki position pe
         let destinationIndex;
         if (isOverColumn) {
-          destinationIndex = destCards.length; // column ke end mein
+          destinationIndex = destCards.length;
         } else {
           destinationIndex = destCards.findIndex((c) => c._id === overId);
           if (destinationIndex === -1) destinationIndex = destCards.length;
         }
 
-        console.log("[BoardContext] Cross-column move:", {
-          activeId,
-          sourceColId,
-          destColId,
-          sourceIndex,
-          destinationIndex,
-        });
-
-        // Optimistic UI update
         setBoardsRaw((prev) =>
           prev.map((b) => {
             if (b._id !== currentBoardId) return b;
@@ -443,7 +382,10 @@ export const BoardProvider = ({ children }) => {
                   };
                 }
                 if (col._id === destColId) {
-                  const movingCard = { _id: activeId, text: allCards[activeId]?.text || "" };
+                  const movingCard = {
+                    _id: activeId,
+                    text: allCards[activeId]?.text || "",
+                  };
                   const newCards = [...(col.cards || [])];
                   newCards.splice(destinationIndex, 0, movingCard);
                   return { ...col, cards: newCards };
@@ -451,28 +393,23 @@ export const BoardProvider = ({ children }) => {
                 return col;
               }),
             };
-          }),
+          })
         );
 
         try {
-          //  SAHI API CALL — moveCard controller use karo
           await apiCall(`/cards/${activeId}/move`, "PUT", {
             sourceColumnId: sourceColId,
             destinationColumnId: destColId,
             sourceIndex: sourceIndex === -1 ? 0 : sourceIndex,
             destinationIndex,
           });
-          console.log("[BoardContext]  Card moved & saved to DB successfully");
         } catch (err) {
-          console.error("[BoardContext] card cross-column move error:", err.message);
-          await silentRefresh(); // Error pe DB se fresh data lo
+          console.error("[BoardContext] cross-column move error:", err.message);
+          await silentRefresh();
         }
         return;
       }
 
-      // ------------------------------------------
-      // CASE 2b: Same column card reorder
-      // ------------------------------------------
       if (sourceColId === destColId && !isOverColumn) {
         const sourceCol = board.columns[sourceColId];
         if (!sourceCol) return;
@@ -496,7 +433,7 @@ export const BoardProvider = ({ children }) => {
                 return { ...col, cards: reorderedCards };
               }),
             };
-          }),
+          })
         );
 
         try {
@@ -509,12 +446,9 @@ export const BoardProvider = ({ children }) => {
         }
       }
     },
-    [currentBoardId, boardsObj, allCards, boardsRaw, silentRefresh],
+    [currentBoardId, boardsObj, allCards, boardsRaw, silentRefresh]
   );
 
-  // =============================================
-  // VALUE
-  // =============================================
   const value = {
     data,
     loading,
