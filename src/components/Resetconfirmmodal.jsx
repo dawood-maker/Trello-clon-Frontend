@@ -32,6 +32,10 @@ const ResetConfirmModal = ({ isOpen, onCancel, onConfirm }) => {
           0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.35); }
           50%       { box-shadow: 0 0 0 14px rgba(239,68,68,0); }
         }
+        @keyframes rm-icon-spin {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
         @keyframes rm-shake {
           0%,100% { transform: translateX(0); }
           20%     { transform: translateX(-5px); }
@@ -46,6 +50,7 @@ const ResetConfirmModal = ({ isOpen, onCancel, onConfirm }) => {
         .rm-backdrop { animation: rm-backdrop-in 0.25s ease forwards; }
         .rm-card     { animation: rm-card-in 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
         .rm-icon-ring { animation: rm-icon-pulse 1.8s ease-in-out infinite; }
+        .rm-icon-ring:hover .rm-spin-icon { animation: rm-icon-spin 0.6s ease-in-out; }
         .rm-warning-stripe {
           background-image: repeating-linear-gradient(
             45deg,
@@ -89,17 +94,16 @@ const ResetConfirmModal = ({ isOpen, onCancel, onConfirm }) => {
           {/* Top glow line */}
           <div className="rm-top-glow absolute top-0 left-[20%] right-[20%] h-[2px] rounded-full" />
 
-          {/* ── Trash Icon — NO hover effect ── */}
+          {/* ── Reset Icon ── */}
           <div className="rm-icon-ring rm-icon-bg w-[72px] h-[72px] rounded-full border border-red-500/40 flex items-center justify-center mb-1">
             <svg
+              className="rm-spin-icon"
               width="32" height="32" viewBox="0 0 24 24" fill="none"
               stroke="rgba(239,68,68,0.9)" strokeWidth="1.6"
               strokeLinecap="round" strokeLinejoin="round"
             >
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-              <path d="M10 11v6M14 11v6" />
-              <path d="M9 6V4h6v2" />
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
             </svg>
           </div>
 
