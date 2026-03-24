@@ -66,7 +66,7 @@ const ProfileAvatar = ({ user }) => {
 
   return (
     <div className="flex flex-col items-center mb-2 sm:mb-4">
-      {/* ✅ animation wali line REMOVE kar di */}
+      {/* . animation wali line REMOVE kar di */}
       <div
         className={`relative p-1 rounded-full bg-gradient-to-br ${config.bg} ${config.glow}`}
       >

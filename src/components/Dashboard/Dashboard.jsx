@@ -6,7 +6,7 @@ import { useBoard } from "../../context/BoardContext";
 import Sidebar from "../Sidebar";
 import Column from "../Column/Column";
 import CardItem from "../CardItem/CardItem";
-import Index from "./ProfileModal/index"; // ✅ FIX: ../ProfileModal → ./ProfileModal
+import Index from "./ProfileModal/index"; // . FIX: ../ProfileModal → ./ProfileModal
 import NewBoardModal from "./NewBoardModal";
 import ShareMenu from "./ShareMenu";
 import ProfileMenu from "./ProfileMenu";
@@ -138,7 +138,7 @@ const Dashboard = () => {
     console.log("👤 Dashboard handleUserUpdate called | hasPhoto:", !!updatedUser?.profilePicture);
     const merged = { ...currentUser, ...updatedUser };
     localStorage.setItem("user", JSON.stringify(merged));
-    console.log("✅ Dashboard: localStorage updated with new user");
+    console.log(". Dashboard: localStorage updated with new user");
     setCurrentUser(merged);
   };
 

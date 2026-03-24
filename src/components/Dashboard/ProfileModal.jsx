@@ -50,12 +50,12 @@ const ProfileModal = ({ onClose }) => {
       setErrorMsg("Image 5MB se chhoti honi chahiye");
       return;
     }
-    console.log("✅ File valid, converting to base64...");
+    console.log(". File valid, converting to base64...");
     setErrorMsg("");
     const reader = new FileReader();
     reader.onloadend = () => {
       console.log(
-        "✅ base64 conversion complete | length:",
+        ". base64 conversion complete | length:",
         reader.result?.length,
       );
       setPreviewPic(reader.result);
@@ -118,12 +118,12 @@ const ProfileModal = ({ onClose }) => {
         gender: editGender,
         profilePicture: previewPic,
       });
-      console.log("✅ updateProfile result:", result);
+      console.log(". updateProfile result:", result);
 
       if (result?.success) {
-        setSuccessMsg("Profile update ho gaya! ✅");
+        setSuccessMsg("Profile update ho gaya! .");
         setIsEditing(false);
-        console.log("✅ Profile saved successfully");
+        console.log(". Profile saved successfully");
         setTimeout(() => setSuccessMsg(""), 3000);
       } else {
         console.warn("⚠️ updateProfile returned failure:", result?.message);

@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { fixHexColor } from "../utils/colorUtils"; // ✅ nai utility
+import { fixHexColor } from "../utils/colorUtils"; // . nai utility
 
 const API_URL = "http://localhost:5002/api";
 const BoardContext = createContext();
@@ -144,14 +144,14 @@ export const BoardProvider = ({ children }) => {
 
   // =============================================
   // ADD BOARD
-  // ✅ FIX: fixHexColor auto-fix karta hai — koi error nahi
+  // . FIX: fixHexColor auto-fix karta hai — koi error nahi
   //    #60A5   → #60A500  (pad with zeros)
   //    #ABC    → #ABC     (3-digit valid)
   //    #60A5FA → #60A5FA  (already valid)
   //    garbage → #6B7280  (fallback gray)
   // =============================================
   const addBoard = useCallback(async (name, color) => {
-    const safeColor = fixHexColor(color); // ✅ auto-fix
+    const safeColor = fixHexColor(color); // . auto-fix
     console.log("[BoardContext] color fix:", color, "→", safeColor);
 
     try {

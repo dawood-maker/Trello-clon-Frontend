@@ -42,7 +42,7 @@ const UpdatePasswordForm = ({ email, otp }) => {
 
       const data = await res.json();
       if (data.success) {
-        setMessage("✅ Password updated successfully! Redirecting to login...");
+        setMessage(". Password updated successfully! Redirecting to login...");
         setTimeout(() => navigate("/login"), 2000);
       } else {
         setMessage(`❌ ${data.message || "Failed to update password."}`);

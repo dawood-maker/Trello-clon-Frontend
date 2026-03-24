@@ -7,7 +7,7 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// ✅ Token automatically har request mein lagao
+// . Token automatically har request mein lagao
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -17,7 +17,7 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    console.log("✅ API Response:", response.config.url, response.data);
+    console.log(". API Response:", response.config.url, response.data);
     return response;
   },
   (error) => {
@@ -48,7 +48,7 @@ export const boardAPI = {
 };
 
 // ===========================
-// Column APIs  ✅ FIXED — backend routes se match
+// Column APIs  . FIXED — backend routes se match
 // ===========================
 export const columnAPI = {
   // GET /api/columns/board/:boardId
@@ -65,7 +65,7 @@ export const columnAPI = {
 };
 
 // ===========================
-// Card APIs  ✅ FIXED — backend routes se match
+// Card APIs  . FIXED — backend routes se match
 // ===========================
 export const cardAPI = {
   // GET /api/cards/column/:columnId

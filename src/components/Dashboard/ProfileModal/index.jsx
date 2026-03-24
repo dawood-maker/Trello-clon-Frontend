@@ -20,7 +20,7 @@ const validateNameGender = (name, gender) => {
     console.warn("⚠️ Male name with female gender detected:", lowerName);
     return { valid: false, message: `"${name}" ek male name lagta hai! Female gender ke saath female name use karein.` };
   }
-  console.log("✅ validateNameGender passed");
+  console.log(". validateNameGender passed");
   return { valid: true };
 };
 

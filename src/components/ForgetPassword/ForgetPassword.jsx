@@ -32,7 +32,7 @@ const ForgetPassword = () => {
     console.log("📬 API Result:", result);
 
     if (result.success) {
-      console.log("✅ OTP Generated Successfully");
+      console.log(". OTP Generated Successfully");
       setOtpSent(true);
       setResetToken(result.resetToken || "");
       setDebugOtp(result.debugOtp || "");

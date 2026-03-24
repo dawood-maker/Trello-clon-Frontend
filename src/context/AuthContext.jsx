@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ Important: for cookies
+        credentials: "include", // . Important: for cookies
         body: JSON.stringify({ name, email, password }),
       });
       const data = await res.json();
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // ✅ for cookies
+        credentials: "include", // . for cookies
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();

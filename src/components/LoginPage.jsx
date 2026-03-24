@@ -29,7 +29,7 @@ export default function LoginPage() {
         { withCredentials: true },
       );
 
-      console.log("✅ Login Success Response:", res.data);
+      console.log(". Login Success Response:", res.data);
       console.log("👤 Setting User:", res.data.user);
 
       setUser(res.data.user);

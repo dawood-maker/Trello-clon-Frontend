@@ -17,7 +17,7 @@ const Login = () => {
   useEffect(() => {
     console.log("🔍 Auth State Changed:", isAuthenticated);
     if (isAuthenticated) {
-      console.log("✅ User Authenticated → Navigating to /dashboard");
+      console.log(". User Authenticated → Navigating to /dashboard");
       navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
@@ -54,7 +54,7 @@ const Login = () => {
     console.log("📬 Login API Result:", result);
 
     if (result.success) {
-      console.log("✅ Login Successful → Navigating to /dashboard");
+      console.log(". Login Successful → Navigating to /dashboard");
       navigate("/dashboard");
     } else {
       console.log("❌ Login Failed");

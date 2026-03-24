@@ -1,7 +1,7 @@
 const MessageAlert = ({ message }) => {
   if (!message) return null;
 
-  const isSuccess = message.includes("✅");
+  const isSuccess = message.includes(".");
 
   return (
     <div
@@ -15,7 +15,7 @@ const MessageAlert = ({ message }) => {
       <span
         className={`text-lg ${isSuccess ? "text-green-600" : "text-red-600"}`}
       >
-        {isSuccess ? "✅" : "⚠️"}
+        {isSuccess ? "." : "⚠️"}
       </span>
       <span className="font-medium">{message}</span>
     </div>

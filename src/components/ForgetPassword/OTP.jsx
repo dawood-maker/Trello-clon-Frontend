@@ -45,7 +45,7 @@ const OTP = ({ email, navigate }) => {
 
       if (result.success && !hasNavigated.current) {
         hasNavigated.current = true;
-        setMessage("✅ OTP verified! Redirecting...");
+        setMessage(". OTP verified! Redirecting...");
         setTimeout(() => {
           navigate("/reset-password", { state: { email, otp }, replace: true });
         }, 800);
@@ -99,7 +99,7 @@ const OTP = ({ email, navigate }) => {
           {message && (
             <div
               className={`px-4 py-3 rounded-lg text-sm mb-4 ${
-                message.includes("✅")
+                message.includes(".")
                   ? "bg-green-50 text-green-800 border border-green-300"
                   : "bg-red-50 text-red-700 border border-red-300"
               }`}
