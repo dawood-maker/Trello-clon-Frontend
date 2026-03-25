@@ -18,12 +18,6 @@ const ResetConfirmModal = ({ isOpen, onCancel, onConfirm }) => {
           Reset Everything?
         </h2>
 
-        {/* Description */}
-        <p className="mt-3 text-sm text-gray-600 leading-relaxed">
-          This action is{" "}
-          <span className="font-semibold text-red-500">permanent</span> and cannot be undone.
-        </p>
-
         {/* Warning Box */}
         <div className="mt-5 p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-600">
           ⚠️ All boards and columns will be permanently deleted.
