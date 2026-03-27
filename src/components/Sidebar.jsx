@@ -30,7 +30,7 @@ const Sidebar = ({
 
   return (
     <>
-      {/* Reset Modal — document.body mein render hoga (center screen) */}
+      {/* Reset Modal */}
       <ResetConfirmModal
         isOpen={showResetModal}
         onCancel={handleResetCancel}
